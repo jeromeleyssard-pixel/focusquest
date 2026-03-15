@@ -1,0 +1,12 @@
+{
+  "app": {
+    "title": "FocusQuest",
+    "subtitle": "Entraînement cognitif pour enfants TDAH (5–17 ans)"
+  },
+  "ageSelector": {
+    "junior": "5 à 7 ans",
+    "standard": "8 à 17 ans",
+    "choose": "Choisissez la version pour l'enfant"
+  },
+  "disclaimer": "FocusQuest est un outil d'entraînement cognitif. Il n'est pas un dispositif médical, ne traite pas le TDAH et ne remplace aucun suivi par un professionnel de santé."
+}

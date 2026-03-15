@@ -1,0 +1,16 @@
+/* Design tokens — couleurs, espacements, typographie */
+:root {
+  --fq-primary: #0d7377;
+  --fq-primary-light: #14a3a8;
+  --fq-junior: #2ec4b6;
+  --fq-standard: #7b2cbf;
+  --fq-bg: #1a1a2e;
+  --fq-surface: #16213e;
+  --fq-text: #e8e8e8;
+  --fq-text-muted: #a0a0a0;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+}

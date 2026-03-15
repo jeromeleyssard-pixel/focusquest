@@ -15,7 +15,16 @@ Ce projet est sous GNU Affero General Public License version 3. Le code source e
 
 ## Développement
 
-*(À venir : instructions d’installation et de lancement après initialisation du projet.)*
+- **Prérequis** : Node.js 22 LTS, npm 10+
+- **Installation** : `npm install`
+- **Lancement** : `npm run dev` → http://localhost:8080
+- **Build** : `npm run build`
+- **Tests** : `npm run test`
+- **Déploiement** : le dépôt est configuré pour GitHub Pages via GitHub Actions (push sur `main`).
+
+## Licences des dépendances
+
+Ce projet utilise des bibliothèques sous licence MIT (React, Vite, Phaser, jsPsych, Chart.js, Zustand, etc.). Les attributions sont disponibles dans les packages npm respectifs. Le projet FocusQuest lui-même est sous AGPL-3.0.
 
 ## Dépôt
 

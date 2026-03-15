@@ -1,25 +1,32 @@
-# Dependencies
-node_modules/
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# Build
-dist/
+node_modules
+dist
+dist-ssr
 *.local
-
-# Environment
-.env
-.env.*
-
-# IDE / OS
-.idea/
-.vscode/
-*.swp
-.DS_Store
-Thumbs.db
 
 # Extraction temporaire (docx)
 docx_extract_1/
 temp1.zip
+*.docx
+*_extracted.txt
+extract_docx.py
+focusquest/
 
-# Logs
-*.log
-npm-debug.log*
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

@@ -1,0 +1,12 @@
+{
+  "app": {
+    "title": "FocusQuest",
+    "subtitle": "Adaptive cognitive training for ADHD children (5–17)"
+  },
+  "ageSelector": {
+    "junior": "Ages 5–7",
+    "standard": "Ages 8–17",
+    "choose": "Choose the version for the child"
+  },
+  "disclaimer": "FocusQuest is a cognitive training tool. It is not a medical device, does not treat ADHD, and does not replace care by a health professional."
+}
