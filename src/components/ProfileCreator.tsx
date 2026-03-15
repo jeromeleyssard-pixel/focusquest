@@ -54,10 +54,17 @@ export function ProfileCreator() {
                 style={{
                   ...styles.avatarBtn,
                   borderColor: avatar === i ? color : 'transparent',
+                  borderWidth: avatar === i ? 3 : 1,
                 }}
                 title={`Avatar ${i + 1}`}
               >
-                {i + 1}
+                <img
+                  src={`${import.meta.env.BASE_URL}assets/images/avatars/avatar_${i}.svg`}
+                  alt={`Avatar ${i + 1}`}
+                  width={64}
+                  height={64}
+                  style={styles.avatarImg}
+                />
               </button>
             ))}
           </div>
@@ -109,13 +116,21 @@ const styles: Record<string, React.CSSProperties> = {
   input: { padding: 8, fontSize: 16, borderRadius: 8 },
   avatarRow: { display: 'flex', gap: 8, flexWrap: 'wrap' },
   avatarBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
+    width: 64,
+    height: 64,
+    borderRadius: 12,
     border: '2px solid',
+    padding: 0,
     background: 'var(--fq-surface)',
     color: 'var(--fq-text)',
     cursor: 'pointer',
+    overflow: 'hidden',
+  },
+  avatarImg: {
+    display: 'block',
+    width: 64,
+    height: 64,
+    objectFit: 'cover',
   },
   colorRow: { display: 'flex', gap: 8 },
   colorBtn: {
