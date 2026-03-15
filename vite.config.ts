@@ -9,6 +9,11 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['assets/**/*'],
+      workbox: {
+        globPatterns: ['**/*.{js,css,ico,png,svg,woff2,webmanifest}'],
+        skipWaiting: true,
+        clientsClaim: true,
+      },
       manifest: {
         name: 'FocusQuest',
         short_name: 'FocusQuest',

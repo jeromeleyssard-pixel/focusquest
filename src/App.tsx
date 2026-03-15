@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useRegisterSW } from 'virtual:pwa-register/react';
 import { AgeSelector } from './components/AgeSelector';
 import { ProfileCreator } from './components/ProfileCreator';
 import { ProfileResume } from './components/ProfileResume';
@@ -12,6 +13,11 @@ import { ParentsPage } from './components/ParentsPage';
 
 export default function App() {
   const activeProfile = useProfileStore((s) => s.activeProfile);
+  useRegisterSW({
+    onNeedRefresh() {
+      window.location.reload();
+    },
+  });
 
   return (
     <BrowserRouter>
