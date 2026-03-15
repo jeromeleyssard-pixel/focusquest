@@ -419,7 +419,7 @@ export function SessionWrapper() {
 
   return (
     <div
-      className="session-layout"
+      className={`session-layout${showDisclaimer ? ' has-disclaimer' : ''}`}
       style={{
         padding: 24,
         paddingTop: showDisclaimer ? disclaimerHeight + 24 : 24,
@@ -508,7 +508,7 @@ export function SessionWrapper() {
         </div>
       )}
       {isTimedVersion && (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8, flexShrink: 0 }}>
           {isJunior ? (
             <SnailTimer
               elapsedSeconds={elapsedSeconds}
@@ -541,7 +541,7 @@ export function SessionWrapper() {
       <div
         ref={containerRef}
         className="jspsych-container"
-        style={{ minHeight: 200 }}
+        style={{ minHeight: '60vh', flex: 1 }}
       />
     </div>
   );

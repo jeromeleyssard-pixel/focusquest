@@ -10,7 +10,7 @@ const ANIMAL_SRC = (i: number) => `${BASE}assets/images/junior/oneback/animal${i
 const FOREST_BG = `${BASE}assets/images/junior/forest-bg.svg`;
 
 function wrapForet(html: string): string {
-  return `<div class="oneback-foret" style="background-image:url(${FOREST_BG});background-size:cover;background-position:center;min-height:200px;display:flex;align-items:center;justify-content:center;border-radius:12px;">${html}</div>`;
+  return `<div class="oneback-foret fq-stimulus-box" style="background-image:url(${FOREST_BG});background-size:cover;background-position:center;min-height:55vh;display:flex;align-items:center;justify-content:center;border-radius:12px;">${html}</div>`;
 }
 
 export interface OneBackConfig {
@@ -74,7 +74,7 @@ export function buildOneBackTimeline(
 
     timeline.push({
       type: jsPsychHtmlButtonResponse,
-      stimulus: wrapForet(`<div class="oneback-stim" style="display:flex;align-items:center;justify-content:center;"><img src="${src}" alt="Animal" width="80" height="80" /></div>`),
+      stimulus: wrapForet(`<div class="oneback-stim" style="display:flex;align-items:center;justify-content:center;"><img src="${src}" alt="Animal" style="width:min(24vw,110px);height:min(24vw,110px);" /></div>`),
       choices: ['Même'],
       stimulus_duration: null,
       trial_duration: responseWindow,

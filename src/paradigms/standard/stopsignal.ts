@@ -41,13 +41,17 @@ export function buildStopSignalTimeline(
     const ssd = 120 + (level - 1) * 35;
     const arrow = goLeft ? '←' : '→';
 
+    const goContent = `<div style="font-size:min(22vw,80px);color:white;text-shadow:0 2px 10px rgba(0,0,0,0.8);">${arrow}</div>`;
+    const stopContent = `<div style="padding:14px 28px;background:#ef4444;color:white;border-radius:12px;font-weight:bold;font-size:min(8vw,32px);box-shadow:0 4px 12px rgba(0,0,0,0.4);">STOP</div>`;
+    const stimulusHtml = `<div class="fq-stimulus-box" style="background-image:url(${STOP_BG});background-size:cover;background-position:center;min-height:58vh;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;padding-bottom:12px;">${isStopTrial ? stopContent : goContent}${TAP_ZONE_ARROWS}</div>`;
+
     timeline.push({
       type: jsPsychHtmlKeyboardResponse,
-      stimulus: `<div style="background-image:url(${STOP_BG});background-size:cover;background-position:center;min-height:220px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;padding-bottom:12px;"><div style="font-size:72px;color:white;text-shadow:0 2px 10px rgba(0,0,0,0.8);">${arrow}</div>${isStopTrial ? `<div style="position:absolute;top:24px;right:24px;padding:6px 12px;background:#ef4444;color:white;border-radius:8px;font-weight:bold;opacity:0.9;">STOP</div>` : ''}${TAP_ZONE_ARROWS}</div>`,
+      stimulus: stimulusHtml,
       choices: ['arrowleft', 'arrowright'],
       stimulus_duration: null,
       trial_duration: 2000,
-      response_ends_trial: false,
+      response_ends_trial: !isStopTrial,
       data: {
         trialType: 'stopsignal',
         isStopTrial,

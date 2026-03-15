@@ -21,7 +21,7 @@ const NOGO_IMG = `${BASE}assets/images/junior/toad-red.svg`;
 const POND_BG = `${BASE}assets/images/junior/pond-bg.svg`;
 
 function wrapMare(stim: string): string {
-  return `<div class="gonogo-mare" style="background-image:url(${POND_BG});background-size:cover;background-position:center;min-height:200px;display:flex;align-items:center;justify-content:center;border-radius:12px;">${stim}</div>`;
+  return `<div class="gonogo-mare fq-stimulus-box" style="background-image:url(${POND_BG});background-size:cover;background-position:center;min-height:55vh;display:flex;align-items:center;justify-content:center;border-radius:12px;">${stim}</div>`;
 }
 
 export function buildGoNoGoTimeline(
@@ -34,11 +34,11 @@ export function buildGoNoGoTimeline(
   const goStimulus =
     config.goStimulus.indexOf('<img') !== -1
       ? config.goStimulus
-      : `<div class="stim-go stim-mare"><img src="${GO_IMG}" alt="Grenouille" width="80" height="80" /></div>`;
+      : `<div class="stim-go stim-mare"><img src="${GO_IMG}" alt="Grenouille" style="width:min(22vw,100px);height:min(22vw,100px);" /></div>`;
   const nogoStimulus =
     config.nogoStimulus.indexOf('<img') !== -1
       ? config.nogoStimulus
-      : `<div class="stim-nogo stim-mare"><img src="${NOGO_IMG}" alt="Crapaud" width="80" height="80" /></div>`;
+      : `<div class="stim-nogo stim-mare"><img src="${NOGO_IMG}" alt="Crapaud" style="width:min(22vw,100px);height:min(22vw,100px);" /></div>`;
   const goStimulusWrapped = wrapMare(goStimulus);
   const nogoStimulusWrapped = wrapMare(nogoStimulus);
 

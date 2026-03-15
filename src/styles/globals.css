@@ -16,6 +16,35 @@ body {
   min-height: 100vh;
 }
 
+/* Zone de jeu grande sur smartphone */
+.session-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.session-layout .jspsych-container {
+  flex: 1;
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.session-layout .jspsych-container > div {
+  width: 100%;
+}
+
+@media (max-width: 600px) {
+  .session-layout {
+    padding: 12px !important;
+    padding-top: 12px !important;
+  }
+  .session-layout.has-disclaimer {
+    padding-top: 56px !important;
+  }
+}
+
 .dyslexic {
   --font-main: 'OpenDyslexic', system-ui, sans-serif;
 }
