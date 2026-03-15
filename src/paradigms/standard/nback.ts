@@ -30,7 +30,7 @@ export function buildNBackTimeline(
 
     timeline.push({
       type: jsPsychHtmlKeyboardResponse,
-      stimulus: `<div style="background-image:url(${NBACK_BG});background-size:cover;background-position:center;min-height:220px;border-radius:12px;display:flex;align-items:center;justify-content:center;"><div style="font-size:72px;color:#ffffff;font-weight:700;text-shadow:0 2px 10px rgba(0,0,0,0.8);">${current}</div></div>`,
+      stimulus: `<div style="background-image:url(${NBACK_BG});background-size:cover;background-position:center;height:40vh;max-height:260px;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:8px;box-sizing:border-box;"><div style="font-size:min(18vw,72px);color:#ffffff;font-weight:700;text-shadow:0 2px 10px rgba(0,0,0,0.8);">${current}</div></div>`,
       choices: [' '],
       stimulus_duration: 1200,
       trial_duration: 2200,

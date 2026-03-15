@@ -8,7 +8,7 @@ const INSTRUCTION_TEXTS: Record<ModuleId, string> = {
     'Regarde le panneau en haut. S\'il dit COULEUR : touche ROUGE si la carte est rouge, BLEU si elle est bleue. S\'il dit FORME : touche ÉTOILE si c\'est une étoile, ROND si c\'est un rond. Choisis gauche ou droite selon la règle !',
   cpt: 'Appuie seulement quand tu vois X juste après A. Pour toutes les autres lettres, ne réponds pas.',
   nback:
-    'Si la lettre est la même qu\'il y a N lettres en arrière, appuie. Sinon, ne fais rien.',
+    "Tu vas voir des lettres qui défilent, une par une. Regarde-les bien. Quand tu revois une lettre qui est déjà apparue il y a quelques instants, appuie. Si la lettre est nouvelle ou différente, ne touche à rien. Le jeu change tout seul la difficulté pendant que tu joues.",
   stopsignal:
     'Suis la flèche aussi vite que possible. Si le signal STOP apparaît, arrête-toi et n\'appuie plus.',
   taskswitch:
@@ -89,8 +89,8 @@ export function ModuleInstructions({ moduleId, onStart }: ModuleInstructionsProp
         )}
         {moduleId === 'nback' && (
           <div style={styles.standardBlock}>
-            <div style={styles.standardIcon}>N</div>
-            <span style={styles.hint}>Même lettre qu\'il y a N coups ?</span>
+            <div style={styles.standardIcon}>A</div>
+            <span style={styles.hint}>Si une lettre revient comme tout à l&apos;heure, appuie.</span>
           </div>
         )}
         {moduleId === 'stopsignal' && (
@@ -123,8 +123,12 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: '50vh',
-    padding: 24,
+    padding: 16,
     gap: 24,
+    width: '100%',
+    maxWidth: 480,
+    margin: '0 auto',
+    boxSizing: 'border-box',
   },
   visual: {
     display: 'flex',

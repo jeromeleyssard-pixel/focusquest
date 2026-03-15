@@ -1,8 +1,14 @@
+# Déploiement sur GitHub Pages.
+# Prérequis : dans le dépôt, Settings > Pages > Source = "GitHub Actions".
 name: Deploy FocusQuest to GitHub Pages
 
 on:
   push:
     branches: [main]
+
+# Évite les warnings de dépréciation Node 20 (passage à Node 24)
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
 
 permissions:
   contents: read
