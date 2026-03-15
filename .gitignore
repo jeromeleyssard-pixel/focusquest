@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Build
+dist/
+*.local
+
+# Environment
+.env
+.env.*
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Extraction temporaire (docx)
+docx_extract_1/
+temp1.zip
+
+# Logs
+*.log
+npm-debug.log*
