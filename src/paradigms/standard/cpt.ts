@@ -53,8 +53,8 @@ export function buildCPTTimeline(
     type: jsPsychHtmlKeyboardResponse,
     stimulus: `<div class="cpt-wrap fq-stimulus-box" style="background-image:url(${CPT_BG});background-size:cover;background-position:center;min-height:58vh;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;"><div class="cpt-letter" style="font-size:min(22vw,80px);text-align:center;color:#ffffff;text-shadow:0 2px 8px rgba(0,0,0,0.8);font-weight:bold;">${t.stimulus}</div>${TAP_ZONE_SPACE}</div>`,
     choices: [' '],
-    stimulus_duration: Math.max(180, 300 - (sc.currentLevel - 1) * 20),
-    trial_duration: Math.max(1000, 2000 - (sc.currentLevel - 1) * 90),
+    stimulus_duration: Math.max(500, 900 - (sc.currentLevel - 1) * 35),
+    trial_duration: Math.max(2200, 3200 - (sc.currentLevel - 1) * 80),
     response_ends_trial: false,
     data: { ...t, difficultyLevel: sc.currentLevel },
     on_finish: (data: { response: string | null; correct?: boolean }) => {
