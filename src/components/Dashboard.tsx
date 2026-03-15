@@ -49,6 +49,12 @@ const STANDARD_MODULES: ModuleId[] = [
   'stopsignal',
   'taskswitch',
 ];
+const STANDARD_MODULE_LABELS: Record<string, string> = {
+  cpt: 'CPT-AX (Attention/Inhibition)',
+  nback: 'N-Back (Mémoire)',
+  stopsignal: 'Stop-Signal (Inhibition)',
+  taskswitch: 'Task-Switch (Flexibilité)',
+};
 
 /** Replay sessions to get level of each Junior module after each session (for courbe générale + 3 courbes). */
 function juniorLevelsAfterEachSession(
@@ -104,7 +110,7 @@ export function Dashboard() {
     : {
         labels: sessions.map((_, i) => `S${i + 1}`),
         datasets: moduleIds.map((id, idx) => ({
-          label: id,
+          label: STANDARD_MODULE_LABELS[id] ?? id,
           data: sessions.filter((s) => s.moduleId === id).map((s) => s.level),
           tension: 0.3,
           borderColor: CHART_COLORS.standard[idx % CHART_COLORS.standard.length].border,
@@ -147,6 +153,12 @@ export function Dashboard() {
         <p style={styles.subtitle}>
           Moyenne des 3 jeux + courbes par type d&apos;entraînement (inhibition, mémoire, flexibilité).
           Chaque bloc d&apos;environ 3 min ou fin de jeu enregistre un point.
+        </p>
+      )}
+      {!isJunior && (
+        <p style={styles.subtitle}>
+          Courbes par domaine Standard : Attention, Mémoire, Inhibition et Flexibilité.
+          Les pauses et fins de session enregistrent des points de progression.
         </p>
       )}
       {sessions.length === 0 ? (

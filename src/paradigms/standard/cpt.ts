@@ -3,6 +3,9 @@ import jsPsychHtmlKeyboardResponse from '@jspsych/plugin-html-keyboard-response'
 import { createStaircase, updateStaircase } from '../../engine/staircase';
 import type { StaircaseConfig } from '../../types/adaptive';
 
+const BASE = typeof import.meta !== 'undefined' && import.meta.env?.BASE_URL != null ? import.meta.env.BASE_URL : '/';
+const CPT_BG = `${BASE}assets/images/standard/cpt-radar-bg.svg`;
+
 type Stimulus = 'A' | 'X' | 'B' | 'Y';
 
 interface CPTTrial {
@@ -45,16 +48,17 @@ export function buildCPTTimeline(
 
   return sequence.map((t) => ({
     type: jsPsychHtmlKeyboardResponse,
-    stimulus: `<div class="cpt-letter" style="font-size:72px;text-align:center">${t.stimulus}</div>`,
+    stimulus: `<div class="cpt-wrap" style="background-image:url(${CPT_BG});background-size:cover;background-position:center;min-height:220px;border-radius:12px;display:flex;align-items:center;justify-content:center;"><div class="cpt-letter" style="font-size:72px;text-align:center;color:#ffffff;text-shadow:0 2px 8px rgba(0,0,0,0.8);font-weight:bold;">${t.stimulus}</div></div>`,
     choices: [' '],
-    stimulus_duration: 300 - (sc.currentLevel - 1) * 15,
-    trial_duration: 2000 - (sc.currentLevel - 1) * 50,
+    stimulus_duration: Math.max(180, 300 - (sc.currentLevel - 1) * 20),
+    trial_duration: Math.max(1000, 2000 - (sc.currentLevel - 1) * 90),
     response_ends_trial: false,
     data: { ...t, difficultyLevel: sc.currentLevel },
     on_finish: (data: { response: string | null; correct?: boolean }) => {
       const responded = data.response !== null;
-      data.correct = t.isTarget ? responded : !responded;
-      sc = updateStaircase(sc, data.correct!, config.staircase);
+      const correct = t.isTarget ? responded : !responded;
+      data.correct = correct;
+      sc = updateStaircase(sc, correct, config.staircase);
     },
   }));
 }

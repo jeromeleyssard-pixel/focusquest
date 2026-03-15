@@ -44,10 +44,15 @@ export function buildGoNoGoTimeline(
 
   for (let i = 0; i < config.totalTrials; i++) {
     const isGo = Math.random() < config.goRatio;
-    const duration =
-      config.stimulusDuration - (staircaseState.currentLevel - 1) * 30;
-    const window =
-      config.responseWindow - (staircaseState.currentLevel - 1) * 100;
+    const level = staircaseState.currentLevel;
+    const duration = Math.max(
+      350,
+      config.stimulusDuration - (level - 1) * 45
+    );
+    const window = Math.max(
+      1200,
+      config.responseWindow - (level - 1) * 180
+    );
 
     timeline.push({
       type: jsPsychHtmlButtonResponse,
@@ -65,7 +70,7 @@ export function buildGoNoGoTimeline(
       trial_duration: Math.max(800, window),
       data: {
         trialType: isGo ? 'go' : 'nogo',
-        difficultyLevel: staircaseState.currentLevel,
+        difficultyLevel: level,
       },
       on_finish: (data: { response: string | null; rt?: number; correct?: boolean }) => {
         const responded = data.response !== null;

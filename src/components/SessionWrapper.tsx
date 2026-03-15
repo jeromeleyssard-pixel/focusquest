@@ -16,6 +16,8 @@ import { SnailTimer } from './junior/SnailTimer';
 
 const JUNIOR_SESSION_MAX_SECONDS = 10 * 60;
 const JUNIOR_PAUSE_INTERVAL_SECONDS = 3 * 60; // pause proposée toutes les 3 min
+const STANDARD_SESSION_MAX_SECONDS = 20 * 60;
+const STANDARD_PAUSE_INTERVAL_SECONDS = 5 * 60;
 
 const MODULE_IDS: ModuleId[] = [
   'gonogo',
@@ -28,6 +30,7 @@ const MODULE_IDS: ModuleId[] = [
 ];
 
 const JUNIOR_MODULES: ModuleId[] = ['gonogo', 'oneback', 'dccs'];
+const STANDARD_MODULES: ModuleId[] = ['cpt', 'nback', 'stopsignal', 'taskswitch'];
 
 function buildTimelineForModule(
   moduleId: ModuleId,
@@ -76,13 +79,21 @@ export function SessionWrapper() {
   const getJuniorSessionUsedSeconds = useProfileStore((s) => s.getJuniorSessionUsedSeconds);
   const addJuniorSessionUsedSeconds = useProfileStore((s) => s.addJuniorSessionUsedSeconds);
   const resetJuniorSessionUsed = useProfileStore((s) => s.resetJuniorSessionUsed);
+  const getStandardSessionUsedSeconds = useProfileStore((s) => s.getStandardSessionUsedSeconds);
+  const addStandardSessionUsedSeconds = useProfileStore((s) => s.addStandardSessionUsedSeconds);
+  const resetStandardSessionUsed = useProfileStore((s) => s.resetStandardSessionUsed);
 
   const id = moduleId as ModuleId | undefined;
   const validId = id && MODULE_IDS.includes(id) ? id : 'gonogo';
 
-  const isJuniorWithInstructions =
-    activeProfile?.version === 'junior' && JUNIOR_MODULES.includes(validId);
-  const [instructionsDone, setInstructionsDone] = useState(!isJuniorWithInstructions);
+  const wantsInstructions =
+    activeProfile?.version === 'junior'
+      ? JUNIOR_MODULES.includes(validId)
+      : activeProfile?.version === 'standard'
+        ? STANDARD_MODULES.includes(validId)
+        : false;
+
+  const [instructionsDone, setInstructionsDone] = useState(!wantsInstructions);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [showPauseOverlay, setShowPauseOverlay] = useState(false);
   const [showDisclaimer, setShowDisclaimer] = useState(true);
@@ -99,6 +110,38 @@ export function SessionWrapper() {
   } | null>(null);
 
   const isJunior = activeProfile?.version === 'junior';
+  const isStandard = activeProfile?.version === 'standard';
+  const isTimedVersion = isJunior || isStandard;
+
+  const getSessionUsedSeconds = useCallback(() => {
+    if (isJunior) return getJuniorSessionUsedSeconds();
+    if (isStandard) return getStandardSessionUsedSeconds();
+    return 0;
+  }, [isJunior, isStandard, getJuniorSessionUsedSeconds, getStandardSessionUsedSeconds]);
+
+  const addSessionUsedSeconds = useCallback(
+    (seconds: number) => {
+      if (isJunior) addJuniorSessionUsedSeconds(seconds);
+      else if (isStandard) addStandardSessionUsedSeconds(seconds);
+    },
+    [isJunior, isStandard, addJuniorSessionUsedSeconds, addStandardSessionUsedSeconds]
+  );
+
+  const resetSessionUsed = useCallback(() => {
+    if (isJunior) resetJuniorSessionUsed();
+    else if (isStandard) resetStandardSessionUsed();
+  }, [isJunior, isStandard, resetJuniorSessionUsed, resetStandardSessionUsed]);
+
+  const sessionMaxSeconds = isJunior
+    ? JUNIOR_SESSION_MAX_SECONDS
+    : isStandard
+      ? STANDARD_SESSION_MAX_SECONDS
+      : 0;
+  const pauseIntervalSeconds = isJunior
+    ? JUNIOR_PAUSE_INTERVAL_SECONDS
+    : isStandard
+      ? STANDARD_PAUSE_INTERVAL_SECONDS
+      : 0;
 
   const saveSegment = useCallback(
     (jsPsych: ReturnType<typeof initJsPsych>, level: number, segmentEndSeconds: number) => {
@@ -129,21 +172,22 @@ export function SessionWrapper() {
   const saveAndShowPause = useCallback(
     (jsPsych: ReturnType<typeof initJsPsych>, level: number) => {
       const thisGameSeconds = Math.round(jsPsych.getTotalTime() / 1000);
-      addJuniorSessionUsedSeconds(thisGameSeconds);
-      const durationSeconds = Math.min(thisGameSeconds, JUNIOR_SESSION_MAX_SECONDS);
+      addSessionUsedSeconds(thisGameSeconds);
+      const durationSeconds = Math.min(thisGameSeconds, sessionMaxSeconds);
       if (lastSegmentSavedAtRef.current < durationSeconds) {
         saveSegment(jsPsych, level, durationSeconds);
       }
-      if (getJuniorSessionUsedSeconds() >= JUNIOR_SESSION_MAX_SECONDS) {
-        resetJuniorSessionUsed();
+      if (getSessionUsedSeconds() >= sessionMaxSeconds) {
+        resetSessionUsed();
       }
       timelineEndedRef.current = true;
       setShowPauseOverlay(true);
     },
     [
-      addJuniorSessionUsedSeconds,
-      getJuniorSessionUsedSeconds,
-      resetJuniorSessionUsed,
+      addSessionUsedSeconds,
+      getSessionUsedSeconds,
+      resetSessionUsed,
+      sessionMaxSeconds,
       saveSegment,
     ]
   );
@@ -171,14 +215,14 @@ export function SessionWrapper() {
       const thisGameSeconds = useElapsed
         ? elapsedRef.current
         : Math.round(jsPsych.getTotalTime() / 1000);
-      if (isJunior) {
-        addJuniorSessionUsedSeconds(thisGameSeconds);
-        const durationSeconds = Math.min(thisGameSeconds, JUNIOR_SESSION_MAX_SECONDS);
+      if (isTimedVersion) {
+        addSessionUsedSeconds(thisGameSeconds);
+        const durationSeconds = Math.min(thisGameSeconds, sessionMaxSeconds);
         if (lastSegmentSavedAtRef.current < durationSeconds) {
           saveSegment(jsPsych, level, durationSeconds);
         }
-        if (getJuniorSessionUsedSeconds() >= JUNIOR_SESSION_MAX_SECONDS) {
-          resetJuniorSessionUsed();
+        if (getSessionUsedSeconds() >= sessionMaxSeconds) {
+          resetSessionUsed();
         }
       } else {
         const summary = {
@@ -202,25 +246,33 @@ export function SessionWrapper() {
       updateLevel,
       addSession,
       navigate,
-      isJunior,
+      isTimedVersion,
       saveSegment,
-      addJuniorSessionUsedSeconds,
-      getJuniorSessionUsedSeconds,
-      resetJuniorSessionUsed,
+      addSessionUsedSeconds,
+      getSessionUsedSeconds,
+      resetSessionUsed,
+      sessionMaxSeconds,
+      isStandard,
     ]
   );
 
   useEffect(() => {
-    if (!isJuniorWithInstructions || instructionsDone) {
+    if (!wantsInstructions || instructionsDone) {
       const t = setTimeout(() => setShowDisclaimer(false), 4000);
       return () => clearTimeout(t);
     }
-  }, [isJuniorWithInstructions, instructionsDone]);
+  }, [wantsInstructions, instructionsDone]);
 
   useEffect(() => {
-    if (isJuniorWithInstructions && !instructionsDone) return;
+    if (wantsInstructions && !instructionsDone) return;
     if (!containerRef.current || !activeProfile) return;
     void restartCount;
+
+    if (isStandard && getSessionUsedSeconds() >= sessionMaxSeconds) {
+      window.alert('Temps maximum atteint pour cette session Standard. Reviens plus tard.');
+      navigate('/menu', { replace: true });
+      return;
+    }
 
     const jsPsych = initJsPsych({
       display_element: containerRef.current,
@@ -231,7 +283,7 @@ export function SessionWrapper() {
     const timeline = buildTimelineForModule(validId, jsPsych, level);
 
     let intervalId: ReturnType<typeof setInterval> | null = null;
-    if (isJunior) {
+    if (isTimedVersion) {
       setElapsedSeconds(0);
       elapsedRef.current = 0;
       lastPauseAtRef.current = 0;
@@ -242,17 +294,17 @@ export function SessionWrapper() {
         const sec = elapsedRef.current + 1;
         elapsedRef.current = sec;
         setElapsedSeconds(sec);
-        const totalUsed = getJuniorSessionUsedSeconds() + sec;
-        if (totalUsed >= JUNIOR_SESSION_MAX_SECONDS) {
+        const totalUsed = getSessionUsedSeconds() + sec;
+        if (totalUsed >= sessionMaxSeconds) {
           if (intervalId) clearInterval(intervalId);
           jsPsych.abortCurrentTimeline();
           finishAndNavigate(jsPsych, level, true);
           return;
         }
         const pauseMark =
-          Math.floor(sec / JUNIOR_PAUSE_INTERVAL_SECONDS) * JUNIOR_PAUSE_INTERVAL_SECONDS;
+          Math.floor(sec / pauseIntervalSeconds) * pauseIntervalSeconds;
         if (
-          pauseMark >= JUNIOR_PAUSE_INTERVAL_SECONDS &&
+          pauseMark >= pauseIntervalSeconds &&
           pauseMark > lastPauseAtRef.current
         ) {
           const ref = sessionRef.current;
@@ -271,7 +323,7 @@ export function SessionWrapper() {
       .then(() => {
         if (intervalId) clearInterval(intervalId);
         if (sessionRef.current?.ended) return;
-        if (isJunior) {
+        if (isTimedVersion) {
           saveAndShowPause(jsPsych, level);
         } else {
           finishAndNavigate(jsPsych, level, false);
@@ -293,12 +345,16 @@ export function SessionWrapper() {
     updateLevel,
     addSession,
     navigate,
-    isJuniorWithInstructions,
+    wantsInstructions,
     instructionsDone,
     isJunior,
+    isStandard,
+    isTimedVersion,
     finishAndNavigate,
     saveSegment,
-    getJuniorSessionUsedSeconds,
+    getSessionUsedSeconds,
+    sessionMaxSeconds,
+    pauseIntervalSeconds,
   ]);
 
   const handleQuit = () => {
@@ -327,7 +383,7 @@ export function SessionWrapper() {
 
   const disclaimerHeight = 44;
 
-  if (isJuniorWithInstructions && !instructionsDone) {
+  if (wantsInstructions && !instructionsDone) {
     return (
       <div
         className="session-layout"
@@ -451,14 +507,20 @@ export function SessionWrapper() {
           </div>
         </div>
       )}
-      {isJunior && (
+      {isTimedVersion && (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-          <SnailTimer
-            elapsedSeconds={elapsedSeconds}
-            sessionUsedSeconds={getJuniorSessionUsedSeconds()}
-            maxSeconds={JUNIOR_SESSION_MAX_SECONDS}
-            pauseIntervalSeconds={JUNIOR_PAUSE_INTERVAL_SECONDS}
-          />
+          {isJunior ? (
+            <SnailTimer
+              elapsedSeconds={elapsedSeconds}
+              sessionUsedSeconds={getSessionUsedSeconds()}
+              maxSeconds={sessionMaxSeconds}
+              pauseIntervalSeconds={pauseIntervalSeconds}
+            />
+          ) : (
+            <div style={{ fontSize: 14, color: 'var(--fq-text-muted)' }}>
+              Session Standard: {Math.min(sessionMaxSeconds, getSessionUsedSeconds() + elapsedSeconds)} / {sessionMaxSeconds}s
+            </div>
+          )}
           <button
             type="button"
             onClick={handleQuit}

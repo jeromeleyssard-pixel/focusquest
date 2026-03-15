@@ -37,8 +37,8 @@ export function buildOneBackTimeline(
 ): Record<string, unknown>[] {
   const totalTrials = config.totalTrials ?? 40;
   const staircaseConfig = config.staircase ?? DEFAULT_STAIRCASE;
-  const isiMinMs = config.isiMinMs ?? 800;
-  const isiMaxMs = config.isiMaxMs ?? 2000;
+  const isiMinMs = config.isiMinMs ?? 600;
+  const isiMaxMs = config.isiMaxMs ?? 2200;
   const responseWindowMs = config.responseWindowMs ?? 3000;
 
   let staircaseState = createStaircase(staircaseConfig);
@@ -57,10 +57,12 @@ export function buildOneBackTimeline(
     previousIndex = animalId;
     const src = ANIMAL_SRC(animalId);
 
+    const level = staircaseState.currentLevel;
     const isiMs = Math.round(
-      isiMaxMs - (staircaseState.currentLevel - 1) * ((isiMaxMs - isiMinMs) / (staircaseConfig.maxLevel - staircaseConfig.minLevel || 1))
+      isiMaxMs - (level - 1) * ((isiMaxMs - isiMinMs) / Math.max(1, staircaseConfig.maxLevel - staircaseConfig.minLevel))
     );
     const isi = Math.max(isiMinMs, Math.min(isiMaxMs, isiMs));
+    const responseWindow = Math.max(1500, responseWindowMs - (level - 1) * 120);
 
     timeline.push({
       type: jsPsychHtmlButtonResponse,
@@ -75,12 +77,12 @@ export function buildOneBackTimeline(
       stimulus: wrapForet(`<div class="oneback-stim" style="display:flex;align-items:center;justify-content:center;"><img src="${src}" alt="Animal" width="80" height="80" /></div>`),
       choices: ['Même'],
       stimulus_duration: null,
-      trial_duration: responseWindowMs,
+      trial_duration: responseWindow,
       data: {
         trialType: 'oneback',
         match: isMatch,
         animalId,
-        difficultyLevel: staircaseState.currentLevel,
+        difficultyLevel: level,
       },
       on_finish: (data: { response: string | null; match?: boolean; correct?: boolean }) => {
         const responded = data.response !== null;

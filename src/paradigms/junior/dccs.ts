@@ -1,5 +1,7 @@
 import type { JsPsych } from 'jspsych';
 import jsPsychHtmlButtonResponse from '@jspsych/plugin-html-button-response';
+import { createStaircase, updateStaircase } from '../../engine/staircase';
+import type { StaircaseConfig } from '../../types/adaptive';
 import { playCorrectSound, playNeutralSound } from '../../utils/juniorFeedback';
 
 const BASE = typeof import.meta !== 'undefined' && import.meta.env?.BASE_URL != null ? import.meta.env.BASE_URL : '/';
@@ -21,34 +23,54 @@ const SHAPE_CHAR: Record<Shape, string> = { star: '★', circle: '●' };
 const COLOR_LABEL: Record<Color, string> = { red: 'Rouge', blue: 'Bleu' };
 const SHAPE_LABEL: Record<Shape, string> = { star: 'Étoile', circle: 'Rond' };
 
-export interface DCCSConfig {
-  totalTrials?: number;
-  switchRateInitial?: number;
-  switchRateMax?: number;
+const DCCS_STAIRCASE: StaircaseConfig = {
+  mode: '1-down-1-up',
+  targetAccuracy: 0.75,
+  stepSize: 1,
+  minLevel: 1,
+  maxLevel: 10,
+  initialLevel: 1,
+};
+
+/** Niveau 1 = peu de changements (1/12), niveau 10 = beaucoup (1/3). */
+function switchRateForLevel(level: number): number {
+  const t = (level - 1) / 9;
+  return 1 / 12 + t * (1 / 3 - 1 / 12);
 }
 
-/** DCCS Junior : tri par couleur ou par forme, panneau indique la règle, deux boîtes (tap gauche/droite). */
+export interface DCCSConfig {
+  totalTrials?: number;
+  staircase?: StaircaseConfig;
+}
+
+/** DCCS Junior : tri par couleur ou par forme, 1-down-1-up sur la fréquence de changement de règle. */
 export function buildDCCSTimeline(
   _jsPsych: JsPsych,
   config: DCCSConfig = {}
 ): Record<string, unknown>[] {
   const totalTrials = config.totalTrials ?? 36;
-  const switchRateInitial = config.switchRateInitial ?? 1 / 10;
-  const switchRateMax = config.switchRateMax ?? 1 / 3;
+  const staircaseConfig = config.staircase ?? DCCS_STAIRCASE;
 
-  let currentRule: Rule = Math.random() < 0.5 ? 'color' : 'shape';
-  let switchRate = switchRateInitial;
+  const ref: {
+    rule: Rule;
+    staircaseState: ReturnType<typeof createStaircase>;
+  } = {
+    rule: Math.random() < 0.5 ? 'color' : 'shape',
+    staircaseState: createStaircase(staircaseConfig),
+  };
+
   const timeline: Record<string, unknown>[] = [];
 
   for (let i = 0; i < totalTrials; i++) {
+    const level = ref.staircaseState.currentLevel;
+    const switchRate = switchRateForLevel(level);
     if (i > 0 && Math.random() < switchRate) {
-      currentRule = currentRule === 'color' ? 'shape' : 'color';
-      switchRate = Math.min(switchRateMax, switchRate + 0.05);
+      ref.rule = ref.rule === 'color' ? 'shape' : 'color';
     }
 
+    const currentRule = ref.rule;
     const color: Color = COLORS[Math.floor(Math.random() * COLORS.length)];
     const shape: Shape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
-
     const correctLabel =
       currentRule === 'color' ? COLOR_LABEL[color] : SHAPE_LABEL[shape];
     const choices: [string, string] =
@@ -66,19 +88,21 @@ export function buildDCCSTimeline(
       stimulus: wrapLab(cardHtml),
       choices,
       stimulus_duration: null,
-      trial_duration: 8000,
+      trial_duration: Math.max(4000, 8000 - (level - 1) * 350),
       data: {
         trialType: 'dccs',
         rule: currentRule,
         color,
         shape,
         correctLabel,
-        difficultyLevel: 1,
+        difficultyLevel: level,
       },
       on_finish: (data: { response: string | null; correctLabel?: string; correct?: boolean }) => {
-        data.correct = data.response === data.correctLabel;
-        if (data.correct) playCorrectSound();
+        const correct = data.response === data.correctLabel;
+        data.correct = correct;
+        if (correct) playCorrectSound();
         else playNeutralSound();
+        ref.staircaseState = updateStaircase(ref.staircaseState, correct, staircaseConfig);
       },
     });
   }

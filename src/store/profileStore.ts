@@ -24,15 +24,19 @@ const defaultLevels: Record<ModuleId, number> = {
   taskswitch: 1,
 };
 
-/** Temps de jeu Junior utilisé dans cette session (tous jeux confondus), en secondes. Non persisté. */
+/** Temps de jeu utilisé dans cette session (non persisté), par version. */
 interface ProfileStore {
   profiles: PlayerProfile[];
   activeProfile: PlayerProfile | null;
   juniorSessionUsedSeconds: number;
+  standardSessionUsedSeconds: number;
   loadAll: () => void;
   getJuniorSessionUsedSeconds: () => number;
   addJuniorSessionUsedSeconds: (seconds: number) => void;
   resetJuniorSessionUsed: () => void;
+  getStandardSessionUsedSeconds: () => number;
+  addStandardSessionUsedSeconds: (seconds: number) => void;
+  resetStandardSessionUsed: () => void;
   createProfile: (
     pseudo: string,
     avatar: Avatar,
@@ -50,11 +54,16 @@ export const useProfileStore = create<ProfileStore>((set, get) => ({
   profiles: [],
   activeProfile: null,
   juniorSessionUsedSeconds: 0,
+  standardSessionUsedSeconds: 0,
   loadAll: () => set({ profiles: loadProfiles() }),
   getJuniorSessionUsedSeconds: () => get().juniorSessionUsedSeconds,
   addJuniorSessionUsedSeconds: (seconds) =>
     set((s) => ({ juniorSessionUsedSeconds: s.juniorSessionUsedSeconds + seconds })),
   resetJuniorSessionUsed: () => set({ juniorSessionUsedSeconds: 0 }),
+  getStandardSessionUsedSeconds: () => get().standardSessionUsedSeconds,
+  addStandardSessionUsedSeconds: (seconds) =>
+    set((s) => ({ standardSessionUsedSeconds: s.standardSessionUsedSeconds + seconds })),
+  resetStandardSessionUsed: () => set({ standardSessionUsedSeconds: 0 }),
   createProfile: (pseudo, avatar, color, version) => {
     const profile: PlayerProfile = {
       id: hashPseudo(pseudo + Date.now()),
