@@ -6,6 +6,10 @@ import type { StaircaseConfig } from '../../types/adaptive';
 const BASE = typeof import.meta !== 'undefined' && import.meta.env?.BASE_URL != null ? import.meta.env.BASE_URL : '/';
 const TASKSWITCH_BG = `${BASE}assets/images/standard/taskswitch-lab-bg.svg`;
 
+const TAP_BTN = (key: 'ArrowLeft' | 'ArrowRight', label: string) =>
+  `<button type="button" class="fq-tap-btn" style="padding:14px 24px;font-size:20px;font-weight:bold;background:var(--fq-primary,#2563eb);color:#fff;border:none;border-radius:12px;cursor:pointer;min-height:48px;touch-action:manipulation;" onclick="var e=new KeyboardEvent('keydown',{key:'${key}',code:'${key}',bubbles:true});document.body.dispatchEvent(e);">${label}</button>`;
+const TAP_ZONE_ARROWS = `<div class="fq-tap-zone" style="margin-top:12px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">${TAP_BTN('ArrowLeft', '← Gauche')}${TAP_BTN('ArrowRight', '→ Droite')}</div>`;
+
 const TS_STAIRCASE: StaircaseConfig = {
   mode: '2-down-1-up',
   targetAccuracy: 0.75,
@@ -51,7 +55,7 @@ export function buildTaskSwitchTimeline(
 
     timeline.push({
       type: jsPsychHtmlKeyboardResponse,
-      stimulus: `<div style="background-image:url(${TASKSWITCH_BG});background-size:cover;background-position:center;min-height:220px;border-radius:12px;padding:14px;display:flex;flex-direction:column;justify-content:space-between;"><div style="align-self:center;background:rgba(17,24,39,0.75);color:#fff;padding:6px 12px;border-radius:8px;font-weight:700;">${panel}</div><div style="display:flex;justify-content:space-between;align-items:center;"><div style="color:#fde68a;font-weight:600">${leftLabel}</div><div style=\"font-size:64px;color:#fff;font-weight:700;text-shadow:0 2px 8px rgba(0,0,0,0.8);\">${value}</div><div style="color:#bfdbfe;font-weight:600">${rightLabel}</div></div></div>`,
+      stimulus: `<div style="background-image:url(${TASKSWITCH_BG});background-size:cover;background-position:center;min-height:220px;border-radius:12px;padding:14px;display:flex;flex-direction:column;justify-content:space-between;"><div style="align-self:center;background:rgba(17,24,39,0.75);color:#fff;padding:6px 12px;border-radius:8px;font-weight:700;">${panel}</div><div style="display:flex;justify-content:space-between;align-items:center;"><div style="color:#fde68a;font-weight:600">${leftLabel}</div><div style=\"font-size:64px;color:#fff;font-weight:700;text-shadow:0 2px 8px rgba(0,0,0,0.8);\">${value}</div><div style="color:#bfdbfe;font-weight:600">${rightLabel}</div></div>${TAP_ZONE_ARROWS}</div>`,
       choices: ['arrowleft', 'arrowright'],
       stimulus_duration: null,
       trial_duration: Math.max(1200, 2600 - (level - 1) * 130),

@@ -6,6 +6,10 @@ import type { StaircaseConfig } from '../../types/adaptive';
 const BASE = typeof import.meta !== 'undefined' && import.meta.env?.BASE_URL != null ? import.meta.env.BASE_URL : '/';
 const STOP_BG = `${BASE}assets/images/standard/stopsignal-road-bg.svg`;
 
+const TAP_BTN = (key: 'ArrowLeft' | 'ArrowRight', label: string) =>
+  `<button type="button" class="fq-tap-btn" style="padding:14px 24px;font-size:20px;font-weight:bold;background:var(--fq-primary,#2563eb);color:#fff;border:none;border-radius:12px;cursor:pointer;min-height:48px;touch-action:manipulation;" onclick="var e=new KeyboardEvent('keydown',{key:'${key}',code:'${key}',bubbles:true});document.body.dispatchEvent(e);">${label}</button>`;
+const TAP_ZONE_ARROWS = `<div class="fq-tap-zone" style="margin-top:12px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">${TAP_BTN('ArrowLeft', '← Gauche')}${TAP_BTN('ArrowRight', '→ Droite')}</div>`;
+
 const STOP_STAIRCASE: StaircaseConfig = {
   mode: '1-down-1-up',
   targetAccuracy: 0.5,
@@ -39,7 +43,7 @@ export function buildStopSignalTimeline(
 
     timeline.push({
       type: jsPsychHtmlKeyboardResponse,
-      stimulus: `<div style="background-image:url(${STOP_BG});background-size:cover;background-position:center;min-height:220px;border-radius:12px;display:flex;align-items:center;justify-content:center;position:relative;"><div style="font-size:72px;color:white;text-shadow:0 2px 10px rgba(0,0,0,0.8);">${arrow}</div>${isStopTrial ? `<div style="position:absolute;top:24px;right:24px;padding:6px 12px;background:#ef4444;color:white;border-radius:8px;font-weight:bold;opacity:0.9;">STOP</div>` : ''}</div>`,
+      stimulus: `<div style="background-image:url(${STOP_BG});background-size:cover;background-position:center;min-height:220px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;padding-bottom:12px;"><div style="font-size:72px;color:white;text-shadow:0 2px 10px rgba(0,0,0,0.8);">${arrow}</div>${isStopTrial ? `<div style="position:absolute;top:24px;right:24px;padding:6px 12px;background:#ef4444;color:white;border-radius:8px;font-weight:bold;opacity:0.9;">STOP</div>` : ''}${TAP_ZONE_ARROWS}</div>`,
       choices: ['arrowleft', 'arrowright'],
       stimulus_duration: null,
       trial_duration: 2000,
