@@ -1,7 +1,9 @@
 import React, { useMemo } from 'react';
 import { Line, Radar, Bar } from 'react-chartjs-2';
 import { useProfileStore } from '../store/profileStore';
-import type { ModuleId, AppVersion } from '../types/profile';
+import type { ModuleId } from '../types/profile';
+import type { SessionSummary } from '../types/session';
+import type { ChartData } from 'chart.js';
 
 /**
  * Advanced dashboard with cognitive domain radar and learning curves
@@ -66,7 +68,7 @@ function CognitiveRadar({
   sessions,
 }: {
   modules: ModuleId[];
-  sessions: any[];
+  sessions: SessionSummary[];
 }) {
   const radarData = useMemo(() => {
     // Map modules to cognitive domains
@@ -124,7 +126,7 @@ function CognitiveRadar({
 
   return (
     <div style={{ width: '400px', height: '400px', margin: '0 auto' }}>
-      <Radar data={radarData as any} options={{ responsive: true, maintainAspectRatio: false }} />
+      <Radar data={radarData as ChartData<'radar'>} options={{ responsive: true, maintainAspectRatio: false }} />
     </div>
   );
 }
@@ -139,7 +141,7 @@ function ModuleCard({
 }: {
   moduleId: ModuleId;
   level: number;
-  sessionData: any[];
+  sessionData: SessionSummary[];
 }) {
   const recentAccuracy = sessionData.length > 0
     ? sessionData[sessionData.length - 1].accuracy * 100
@@ -195,7 +197,7 @@ function LearningCurves({
   sessions,
 }: {
   modules: ModuleId[];
-  sessions: any[];
+  sessions: SessionSummary[];
 }) {
   const chartData = useMemo(() => {
     const moduleLabels: Record<ModuleId, string> = {
@@ -242,7 +244,7 @@ function LearningCurves({
   return (
     <div style={{ height: '300px' }}>
       <Line
-        data={chartData as any}
+        data={chartData as ChartData<'line'>}
         options={{
           responsive: true,
           maintainAspectRatio: false,
@@ -256,7 +258,7 @@ function LearningCurves({
 /**
  * Weekly activity chart
  */
-function WeeklyObservance({ sessions }: { sessions: any[] }) {
+function WeeklyObservance({ sessions }: { sessions: SessionSummary[] }) {
   const weeklyData = useMemo(() => {
     const weekCounts = Array(7).fill(0);
     const today = new Date();
@@ -286,7 +288,7 @@ function WeeklyObservance({ sessions }: { sessions: any[] }) {
   return (
     <div style={{ height: '200px' }}>
       <Bar
-        data={weeklyData as any}
+        data={weeklyData as ChartData<'bar'>}
         options={{
           responsive: true,
           maintainAspectRatio: false,

@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { useProfileStore } from '../store/profileStore';
 import type { SessionSummary } from '../types/session';
+import type { PlayerProfile } from '../types/profile';
 import '../styles/parent-report.css';
 
 /**
@@ -60,7 +61,7 @@ export function ParentReportDashboard() {
 /**
  * Executive summary overview
  */
-function ReportSummary({ profile }: { profile: any }) {
+function ReportSummary({ profile }: { profile: PlayerProfile }) {
   const stats = useMemo(() => {
     const totalSessions = profile.sessions.length;
     const avgAccuracy =
@@ -216,7 +217,7 @@ function CognitiveAssessment({ sessions }: { sessions: SessionSummary[] }) {
   );
 }
 
-function Recommendations({ profile }: { profile: any }) {
+function Recommendations({ profile }: { profile: PlayerProfile }) {
   const recommendations = useMemo(() => {
     const recs: string[] = [];
 
