@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { createStaircase, updateStaircase } from '../../../engine/staircase';
-import type { StaircaseConfig } from '../../../types/adaptive';
+import type { StaircaseConfig, StaircaseState, PhaserTrialResult } from '../../../types/adaptive';
 import { playCorrectSound, playNeutralSound } from '../../../utils/juniorFeedback';
 
 /**
@@ -13,10 +13,10 @@ export class GoNoGoScene extends Phaser.Scene {
   private isGo = false;
   private respondedThisTrial = false;
   private responseWindowStart = 0;
-  private staircaseState: any = null;
+  private staircaseState: StaircaseState | null = null;
   private staircaseConfig: StaircaseConfig | null = null;
-  private results: any[] = [];
-  private onExperimentFinish: ((results: any[]) => void) | null = null;
+  private results: PhaserTrialResult[] = [];
+  private onExperimentFinish: ((results: PhaserTrialResult[]) => void) | null = null;
   private stimulusDisplayTime = 0;
   private responseDeadline = 0;
   private pondBG: Phaser.GameObjects.Image | null = null;
@@ -39,7 +39,7 @@ export class GoNoGoScene extends Phaser.Scene {
       stimulusDuration: number;
       responseWindow: number;
     };
-    onExperimentFinish: (results: any[]) => void;
+    onExperimentFinish: (results: PhaserTrialResult[]) => void;
   }) {
     this.totalTrials = data.config.totalTrials;
     this.staircaseConfig = data.config.staircase;
@@ -62,7 +62,7 @@ export class GoNoGoScene extends Phaser.Scene {
 
     // Level indicator (top-right)
     this.levelIndicator = this.add
-      .text(this.scale.width - 40, 40, `Lvl ${this.staircaseState.currentLevel}`, {
+      .text(this.scale.width - 40, 40, `Lvl ${this.staircaseState!.currentLevel}`, {
         fontSize: '24px',
         color: '#fff',
         fontFamily: 'Arial Bold',
@@ -102,7 +102,7 @@ export class GoNoGoScene extends Phaser.Scene {
     };
     this.isGo = Math.random() < config.goRatio;
 
-    const level = this.staircaseState.currentLevel;
+    const level = this.staircaseState!.currentLevel;
     const duration = Math.max(350, config.stimulusDuration - (level - 1) * 45);
     const window = Math.max(1200, config.responseWindow - (level - 1) * 180);
 
@@ -191,7 +191,7 @@ export class GoNoGoScene extends Phaser.Scene {
 
     // Update staircase
     this.staircaseState = updateStaircase(
-      this.staircaseState,
+      this.staircaseState!,
       correct,
       this.staircaseConfig!
     );
@@ -205,7 +205,7 @@ export class GoNoGoScene extends Phaser.Scene {
         ? Math.max(0, this.time.now - this.responseWindowStart)
         : 0,
       correct,
-      difficultyLevel: this.staircaseState.currentLevel,
+      difficultyLevel: this.staircaseState!.currentLevel,
     };
 
     this.results.push(trialData);
@@ -213,7 +213,7 @@ export class GoNoGoScene extends Phaser.Scene {
 
     // Update level display
     if (this.levelIndicator) {
-      this.levelIndicator.setText(`Lvl ${this.staircaseState.currentLevel}`);
+      this.levelIndicator.setText(`Lvl ${this.staircaseState!.currentLevel}`);
     }
 
     // Clear stimulus

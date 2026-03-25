@@ -1,6 +1,8 @@
 import { useCallback } from 'react';
+import Phaser from 'phaser';
 import type { ModuleId } from '../types/profile';
 import type { SessionData, TrialResult } from '../types/session';
+import type { PhaserTrialResult } from '../types/adaptive';
 import { useProfileStore } from '../store/profileStore';
 import { useTaskManager } from '../store/taskManager';
 import { GoNoGoScene } from '../game/scenes/junior/GoNoGoScene';
@@ -28,50 +30,17 @@ export function useEnhancedSessionRunner() {
       initSession(moduleId, activeProfile.version);
 
       try {
-        let sceneClass: typeof import('phaser').Scene;
-        let config: any;
+        let sceneClass: typeof Phaser.Scene;
 
         if (moduleId === 'gonogo') {
           sceneClass = GoNoGoScene;
-          config = {
-            totalTrials: 60,
-            staircase: {
-              mode: '1-down-1-up',
-              targetAccuracy: 0.65,
-              stepSize: 1,
-              minLevel: 1,
-              maxLevel: 10,
-              initialLevel,
-            },
-            goRatio: 0.7,
-            stimulusDuration: 800,
-            responseWindow: 3000,
-          };
         } else if (moduleId === 'cpt') {
           sceneClass = CPTScene;
-          config = {
-            totalTrials: 72,
-            staircase: {
-              mode: '2-down-1-up',
-              targetAccuracy: 0.75,
-              stepSize: 1,
-              minLevel: 1,
-              maxLevel: 10,
-              initialLevel,
-            },
-          };
         } else {
           throw new Error(`Phaser scene not implemented for module: ${moduleId}`);
         }
 
-        const results = (await runPhaserScene(sceneClass, parentId)) as Array<{
-          stimulusType?: string;
-          stimulus?: string;
-          response: string | null;
-          reactionTimeMs: number;
-          correct: boolean;
-          difficultyLevel: number;
-        }>;
+        const results = (await runPhaserScene(sceneClass, parentId)) as PhaserTrialResult[];
 
         // Process results
         const sessionStartTime = Date.now();

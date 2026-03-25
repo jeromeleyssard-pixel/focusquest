@@ -13,6 +13,15 @@ export interface StaircaseState {
   history: { level: number; correct: boolean }[];
 }
 
+export interface PhaserTrialResult {
+  stimulusType?: string;
+  stimulus?: string;
+  response: string | null;
+  reactionTimeMs: number;
+  correct: boolean;
+  difficultyLevel: number;
+}
+
 export interface QuestState {
   threshold: number;
   sd: number;

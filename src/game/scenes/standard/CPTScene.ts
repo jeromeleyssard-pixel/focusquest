@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { createStaircase, updateStaircase } from '../../../engine/staircase';
-import type { StaircaseConfig } from '../../../types/adaptive';
+import type { StaircaseConfig, StaircaseState, PhaserTrialResult } from '../../../types/adaptive';
 import { playCorrectSound } from '../../../utils/juniorFeedback';
 
 type Stimulus = 'A' | 'X' | 'B' | 'Y';
@@ -24,10 +24,10 @@ export class CPTScene extends Phaser.Scene {
   private responseWindowStart = 0;
   private stimulusDisplayTime = 0;
   private responseDeadline = 0;
-  private staircaseState: any = null;
+  private staircaseState: StaircaseState | null = null;
   private staircaseConfig: StaircaseConfig | null = null;
-  private results: any[] = [];
-  private onExperimentFinish: ((results: any[]) => void) | null = null;
+  private results: PhaserTrialResult[] = [];
+  private onExperimentFinish: ((results: PhaserTrialResult[]) => void) | null = null;
 
   // Visual assets & properties
   private letterText: Phaser.GameObjects.Text | null = null;
@@ -45,7 +45,7 @@ export class CPTScene extends Phaser.Scene {
       totalTrials: number;
       staircase: StaircaseConfig;
     };
-    onExperimentFinish: (results: any[]) => void;
+    onExperimentFinish: (results: PhaserTrialResult[]) => void;
   }) {
     this.totalTrials = data.config.totalTrials;
     this.staircaseConfig = data.config.staircase;
@@ -67,7 +67,7 @@ export class CPTScene extends Phaser.Scene {
 
     // Level indicator (top-right)
     this.levelIndicator = this.add
-      .text(this.scale.width - 40, 40, `Lvl ${this.staircaseState.currentLevel}`, {
+      .text(this.scale.width - 40, 40, `Lvl ${this.staircaseState!.currentLevel}`, {
         fontSize: '24px',
         color: '#fff',
         fontFamily: 'Arial Bold',
@@ -187,7 +187,7 @@ export class CPTScene extends Phaser.Scene {
       return;
     }
 
-    const level = this.staircaseState.currentLevel;
+    const level = this.staircaseState!.currentLevel;
     const duration = Math.max(500, 900 - (level - 1) * 35);
     const window = Math.max(2200, 3200 - (level - 1) * 80);
 
@@ -258,7 +258,7 @@ export class CPTScene extends Phaser.Scene {
 
     // Update staircase
     this.staircaseState = updateStaircase(
-      this.staircaseState,
+      this.staircaseState!,
       correct,
       this.staircaseConfig!
     );
