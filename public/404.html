@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FocusQuest</title>
+    <script>
+      // GitHub Pages SPA Redirect
+      // When GitHub Pages returns 404, redirect to the app root
+      // React Router will then handle the routing
+      const path = decodeURIComponent(window.location.pathname);
+      
+      // Only redirect if path contains 'focusquest'
+      if (path.includes('focusquest')) {
+        // Redirect to the app root - React Router and basename handle the rest
+        window.location.replace('/focusquest/');
+      }
+    </script>
+  </head>
+  <body>
+    <p>Redirecting to FocusQuest...</p>
+  </body>
+</html>

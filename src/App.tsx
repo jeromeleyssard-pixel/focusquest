@@ -14,6 +14,8 @@ import { ParentReportDashboard } from './components/ParentReportDashboard';
 
 export default function App() {
   const activeProfile = useProfileStore((s) => s.activeProfile);
+  const basename = import.meta.env.DEV ? '/' : '/focusquest/';
+  
   useRegisterSW({
     onNeedRefresh() {
       window.location.reload();
@@ -21,7 +23,7 @@ export default function App() {
   });
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <Routes>
         <Route path="/" element={<AgeSelector />} />
         <Route path="/profile/new/:version" element={<ProfileCreator />} />

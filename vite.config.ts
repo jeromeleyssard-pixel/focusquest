@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
-  base: process.env.BASE_URL ?? '/',
+  base: process.env.BASE_URL ?? '/focusquest/',
   plugins: [
     react(),
     VitePWA({
@@ -19,10 +19,7 @@ export default defineConfig({
         short_name: 'FocusQuest',
         description: 'Entraînement cognitif pour enfants TDAH',
         theme_color: '#0D7377',
-        icons: [
-          { src: '/icon-192.png', sizes: '192x192', type: 'image/png' },
-          { src: '/icon-512.png', sizes: '512x512', type: 'image/png' },
-        ],
+        // Icons will be added when available
       },
     }),
   ],
