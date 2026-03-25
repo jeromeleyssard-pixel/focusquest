@@ -1,0 +1,256 @@
+/* Accessibility styles - WCAG AAA compliance */
+
+:root {
+  --font-size-multiplier: 100%;
+}
+
+/* High contrast mode - WCAG AAA (7:1 minimum contrast) */
+.a11y-high-contrast {
+  --fq-primary: #0033cc; /* Darker blue for higher contrast */
+  --fq-secondary: #000000;
+  --fq-success: #006600;
+  --fq-error: #cc0000;
+  --fq-warning: #ff9900;
+  --fq-text-main: #000000;
+  --fq-text-secondary: #333333;
+  --bg-main: #ffffff;
+  --bg-secondary: #e6e6e6;
+}
+
+.a11y-high-contrast body,
+.a11y-high-contrast #root {
+  background: #ffffff;
+  color: #000000;
+  border: 2px solid #000;
+}
+
+.a11y-high-contrast button,
+.a11y-high-contrast input,
+.a11y-high-contrast select,
+.a11y-high-contrast textarea {
+  border: 2px solid #000;
+  background: #ffffff;
+  color: #000000;
+  font-weight: bold;
+}
+
+.a11y-high-contrast button:focus,
+.a11y-high-contrast input:focus,
+.a11y-high-contrast select:focus,
+.a11y-high-contrast textarea:focus {
+  outline: 3px solid #0033cc;
+  outline-offset: 2px;
+}
+
+.a11y-high-contrast .session-metrics-hud {
+  background: #ffffff;
+  border: 3px solid #000;
+  color: #000000;
+}
+
+/* Dyslexic-friendly font */
+.a11y-dyslexic-font,
+.a11y-dyslexic-font * {
+  font-family: 'OpenDyslexic', 'Segoe UI', system-ui, sans-serif !important;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  word-spacing: 0.16em;
+  line-height: 1.6;
+}
+
+.a11y-dyslexic-font body,
+.a11y-dyslexic-font #root {
+  --font-main: 'OpenDyslexic', system-ui, sans-serif;
+}
+
+/* Reduce motion - disable all animations */
+.a11y-reduce-motion,
+.a11y-reduce-motion * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+.a11y-reduce-motion .tweens {
+  duration: 0;
+}
+
+/* Reduce flash/flicker */
+.a11y-reduce-flash {
+  --flash-opacity: 0;
+  --glow-intensity: 0.3;
+}
+
+.a11y-reduce-flash .feedback-ring,
+.a11y-reduce-flash .flash-effect {
+  opacity: var(--flash-opacity, 0);
+  animation-duration: 0s;
+}
+
+/* Font size scaling */
+body {
+  font-size: calc(16px * var(--font-size-multiplier) / 100%);
+}
+
+/* Colorblind-friendly filters */
+
+/* Deuteranopia (red-blind) - uses yellow/blue/pink palette */
+.a11y-deuteranopia {
+  --color-red: #0173b2;
+  --color-green: #de8f05;
+  --color-blue: #cc5de8;
+  --color-primary: #0173b2;
+  --color-secondary: #de8f05;
+  --color-success: #029e73;
+  --color-error: #d45113;
+  --color-warning: #f0e442;
+}
+
+.a11y-deuteranopia svg,
+.a11y-deuteranopia canvas {
+  filter: url(#deuteranopia-filter);
+}
+
+/* Protanopia (red-blind, more severe) - uses teal/orange palette */
+.a11y-protanopia {
+  --color-red: #000000;
+  --color-green: #00d9ff;
+  --color-blue: #ffa200;
+  --color-primary: #00d9ff;
+  --color-secondary: #ffa200;
+  --color-success: #648fff;
+  --color-error: #ffb000;
+  --color-warning: #fe6e00;
+}
+
+.a11y-protanopia svg,
+.a11y-protanopia canvas {
+  filter: url(#protanopia-filter);
+}
+
+/* Tritanopia (blue-yellow blind) - uses red/blue palette */
+.a11y-tritanopia {
+  --color-red: #e60000;
+  --color-green: #26d4ff;
+  --color-blue: #0000ff;
+  --color-primary: #e60000;
+  --color-secondary: #26d4ff;
+  --color-success: #00d4ff;
+  --color-error: #e60000;
+  --color-warning: #fb980f;
+}
+
+.a11y-tritanopia svg,
+.a11y-tritanopia canvas {
+  filter: url(#tritanopia-filter);
+}
+
+/* Focus visible - improve keyboard navigation */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+  outline: 3px solid #4a90e2;
+  outline-offset: 2px;
+}
+
+/* Skip to main content link */
+.skip-to-main {
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+  z-index: 9999;
+}
+
+.skip-to-main:focus {
+  top: 0;
+  left: 0;
+  padding: 8px 12px;
+  background: #000;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 0 0 4px 0;
+}
+
+/* ARIA live regions */
+[aria-live],
+[aria-atomic] {
+  position: absolute;
+  left: -10000px;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+}
+
+/* Increase tap target size */
+.a11y-large-touch-targets button,
+.a11y-large-touch-targets a,
+.a11y-large-touch-targets input[type='button'] {
+  min-height: 48px;
+  min-width: 48px;
+  padding: 12px 16px;
+}
+
+/* Responsive accessibility adjustments */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (prefers-contrast: more) {
+  body {
+    --color-primary: #0033cc;
+    --color-secondary: #000000;
+  }
+}
+
+/* Link underlines for clarity */
+a {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+/* Enhanced button focus states */
+button {
+  position: relative;
+}
+
+button::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: 2px solid transparent;
+  border-radius: inherit;
+  transition: border-color 0.15s;
+  pointer-events: none;
+}
+
+button:focus::before {
+  border-color: #4a90e2;
+}
+
+/* Print styles for accessibility */
+@media print {
+  .a11y-reduce-motion,
+  .a11y-reduce-motion * {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  body {
+    color: #000;
+    background: #fff;
+  }
+}

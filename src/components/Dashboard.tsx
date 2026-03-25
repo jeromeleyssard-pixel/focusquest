@@ -10,6 +10,7 @@ import {
   Legend,
 } from 'chart.js';
 import { Line, Radar } from 'react-chartjs-2';
+import { Link } from 'react-router-dom';
 import { useProfileStore } from '../store/profileStore';
 import type { ModuleId } from '../types/profile';
 
@@ -194,6 +195,9 @@ export function Dashboard() {
       >
         Exporter mes données
       </button>
+      <Link to="/report" style={styles.reportLink}>
+        Voir le rapport parent →
+      </Link>
       <p style={styles.disclaimer}>
         Données stockées uniquement sur cet appareil.
       </p>
@@ -235,6 +239,17 @@ const styles: Record<string, React.CSSProperties> = {
     border: '1px solid var(--fq-text-muted)',
     borderRadius: 8,
     cursor: 'pointer',
+  },
+  reportLink: {
+    display: 'inline-block',
+    marginBottom: 16,
+    marginLeft: 12,
+    padding: '10px 20px',
+    fontSize: 14,
+    background: 'var(--fq-primary)',
+    color: '#fff',
+    borderRadius: 8,
+    textDecoration: 'none',
   },
   disclaimer: {
     fontSize: 12,

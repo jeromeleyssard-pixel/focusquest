@@ -10,6 +10,7 @@ import { SessionWrapper } from './components/SessionWrapper';
 import { Dashboard } from './components/Dashboard';
 import { ReferencesPage } from './components/ReferencesPage';
 import { ParentsPage } from './components/ParentsPage';
+import { ParentReportDashboard } from './components/ParentReportDashboard';
 
 export default function App() {
   const activeProfile = useProfileStore((s) => s.activeProfile);
@@ -51,6 +52,16 @@ export default function App() {
         />
         <Route path="/references" element={<ReferencesPage />} />
         <Route path="/parents" element={<ParentsPage />} />
+        <Route
+          path="/report"
+          element={
+            activeProfile ? (
+              <ParentReportDashboard />
+            ) : (
+              <Navigate to="/" replace />
+            )
+          }
+        />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

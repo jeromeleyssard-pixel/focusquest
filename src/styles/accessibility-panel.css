@@ -1,0 +1,229 @@
+/* Accessibility Panel styles */
+
+.accessibility-panel {
+  background: rgba(13, 115, 119, 0.08);
+  border: 1px solid rgba(13, 115, 119, 0.2);
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.accessibility-panel h2 {
+  margin: 0 0 16px 0;
+  font-size: 1.2em;
+  color: #14b8a6;
+  border-bottom: 2px solid rgba(13, 115, 119, 0.3);
+  padding-bottom: 12px;
+}
+
+.a11y-fieldset {
+  margin-bottom: 20px;
+  border: 1px solid rgba(13, 115, 119, 0.2);
+  border-radius: 6px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.a11y-fieldset legend {
+  color: #14b8a6;
+  font-weight: bold;
+  font-size: 0.95em;
+  padding: 0 8px;
+}
+
+.a11y-checkbox-label,
+.a11y-label {
+  display: flex;
+  align-items: center;
+  margin: 8px 0;
+  cursor: pointer;
+  color: #eee;
+  gap: 8px;
+  font-family: 'OpenDyslexic', system-ui, sans-serif;
+}
+
+.a11y-checkbox-label input[type='checkbox'] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #14b8a6;
+}
+
+.a11y-checkbox-label span,
+.a11y-label span {
+  flex: 1;
+}
+
+.a11y-label select {
+  flex: 1;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(13, 115, 119, 0.3);
+  color: #fff;
+  border-radius: 4px;
+  font-family: inherit;
+}
+
+.a11y-label select:focus {
+  outline: 2px solid #14b8a6;
+  outline-offset: 2px;
+}
+
+.a11y-hint {
+  margin: 8px 0 0 0;
+  font-size: 0.85em;
+  color: #999;
+  line-height: 1.4;
+  font-style: italic;
+}
+
+.a11y-reset-btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 12px;
+  background: rgba(13, 115, 119, 0.3);
+  border: 2px solid rgba(13, 115, 119, 0.5);
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.a11y-reset-btn:hover {
+  background: rgba(13, 115, 119, 0.5);
+  border-color: #14b8a6;
+  color: #14b8a6;
+}
+
+.a11y-reset-btn:focus {
+  outline: 2px solid #14b8a6;
+  outline-offset: 2px;
+}
+
+.a11y-reset-btn:active {
+  transform: scale(0.98);
+}
+
+/* Quick toggle button */
+.accessibility-quick-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 999;
+}
+
+.toggle-btn {
+  padding: 10px 14px;
+  background: #0d7377;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.2em;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.toggle-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(13, 115, 119, 0.4);
+}
+
+.toggle-btn:focus {
+  outline: 2px solid #14b8a6;
+  outline-offset: 2px;
+}
+
+.quick-panel {
+  position: absolute;
+  bottom: 60px;
+  right: 0;
+  background: #1a1a2e;
+  border: 1px solid #0d7377;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  max-width: 350px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.quick-panel .accessibility-panel {
+  background: transparent;
+  border: none;
+  padding: 16px;
+  margin: 0;
+}
+
+.quick-panel .accessibility-panel h2 {
+  margin: 0 0 12px 0;
+  font-size: 1em;
+}
+
+/* A11y high-contrast adjustments */
+.a11y-high-contrast .accessibility-panel {
+  background: #fff;
+  border: 3px solid #000;
+  color: #000;
+}
+
+.a11y-high-contrast .accessibility-panel h2 {
+  color: #0033cc;
+  border-bottom: 3px solid #000;
+}
+
+.a11y-high-contrast .a11y-fieldset {
+  background: #e6e6e6;
+  border: 2px solid #000;
+}
+
+.a11y-high-contrast .a11y-fieldset legend {
+  color: #0033cc;
+  background: #e6e6e6;
+}
+
+.a11y-high-contrast .a11y-checkbox-label,
+.a11y-high-contrast .a11y-label {
+  color: #000;
+}
+
+.a11y-high-contrast .a11y-label select {
+  background: #fff;
+  border: 2px solid #000;
+  color: #000;
+}
+
+.a11y-high-contrast .a11y-reset-btn {
+  background: #0033cc;
+  border: 2px solid #000;
+  color: #fff;
+}
+
+.a11y-high-contrast .a11y-reset-btn:hover {
+  background: #0052ff;
+}
+
+.a11y-high-contrast .toggle-btn {
+  background: #0033cc;
+  border: 2px solid #000;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .accessibility-panel {
+    max-width: 90vw;
+  }
+
+  .quick-panel {
+    max-width: calc(100vw - 20px);
+    max-height: calc(100vh - 120px);
+    right: -160px;
+  }
+}
