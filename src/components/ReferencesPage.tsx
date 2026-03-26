@@ -2,16 +2,16 @@ import { Link } from 'react-router-dom';
 
 export function ReferencesPage() {
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>Références scientifiques et choix de conception</h1>
+    <div className="fq-page fq-prose">
+      <h1 className="fq-page-title">Références scientifiques et choix de conception</h1>
 
-      <section style={styles.section}>
+      <section>
         <h2>Références scientifiques</h2>
         <p>
           FocusQuest s&apos;appuie sur des paradigmes publiés en revues à comité de lecture.
           Voici une sélection d&apos;études récentes (2020-2026) sur l&apos;entraînement cognitif pour le TDAH :
         </p>
-        <ul style={styles.list}>
+        <ul>
           <li>
             <strong>Entraînement cognitif et fonctions exécutives</strong> — Carcelén-Fraile MC et al., Healthcare 2025 ; Revue systématique et méta-analyse sur l&apos;entraînement cognitif pour améliorer les fonctions exécutives et la régulation émotionnelle chez les enfants avec troubles neurodéveloppementaux (incluant TDAH).
           </li>
@@ -33,7 +33,7 @@ export function ReferencesPage() {
         </ul>
       </section>
 
-      <section style={styles.section}>
+      <section>
         <h2>Choix de conception et avancées récentes</h2>
         <p>
           <strong>Paradigmes validés et modernes</strong> : Go/NoGo, 1-Back, DCCS (Junior) et CPT-AX, N-Back, Stop-Signal, Task-Switching (Standard) sont des tâches cognitives validées pour mesurer l&apos;attention, la mémoire de travail et le contrôle inhibiteur. Les études récentes (2020-2026) montrent l&apos;efficacité de ces paradigmes pour améliorer les fonctions exécutives chez les enfants TDAH.
@@ -55,12 +55,12 @@ export function ReferencesPage() {
         </p>
       </section>
 
-      <section style={styles.section}>
+      <section>
         <h2>Tendances émergentes et perspectives (2020-2026)</h2>
         <p>
           Les recherches récentes mettent en évidence plusieurs évolutions importantes dans l&apos;entraînement cognitif pour le TDAH :
         </p>
-        <ul style={styles.list}>
+        <ul>
           <li>
             <strong>Technologies immersives (XR/VR)</strong> : Les revues systématiques montrent que les environnements virtuels augmentent l&apos;engagement et l&apos;efficacité de l&apos;entraînement cognitif chez les enfants neurodivergents.
           </li>
@@ -82,23 +82,11 @@ export function ReferencesPage() {
         </p>
       </section>
 
-      <p style={styles.back}>
-        <Link to="/">Retour à l&apos;accueil</Link>
+      <p style={{ marginTop: 24 }}>
+        <Link to="/" className="fq-link">
+          Retour à l&apos;accueil
+        </Link>
       </p>
     </div>
   );
 }
-
-const styles: Record<string, React.CSSProperties> = {
-  container: {
-    minHeight: '100vh',
-    padding: 24,
-    maxWidth: 720,
-    margin: '0 auto',
-    color: 'var(--fq-text)',
-  },
-  title: { fontSize: 22, marginBottom: 24 },
-  section: { marginBottom: 24 },
-  list: { paddingLeft: 20 },
-  back: { marginTop: 24 },
-};

@@ -1,19 +1,7 @@
 import { useEffect, useRef, useCallback, useState } from 'react';
 import type { ModuleId } from '../../types/profile';
-
-const INSTRUCTION_TEXTS: Record<ModuleId, string> = {
-  gonogo: 'Touche la grenouille verte. Attention au crapaud, ne touche pas !',
-  oneback: 'Quand tu vois le même animal que juste avant, touche !',
-  dccs:
-    'Regarde le panneau en haut. S\'il dit COULEUR : touche ROUGE si la carte est rouge, BLEU si elle est bleue. S\'il dit FORME : touche ÉTOILE si c\'est une étoile, ROND si c\'est un rond. Choisis gauche ou droite selon la règle !',
-  cpt: 'Appuie seulement quand tu vois X juste après A. Pour toutes les autres lettres, ne réponds pas.',
-  nback:
-    "Tu vas voir des lettres qui défilent, une par une. Regarde-les bien. Quand tu revois une lettre qui est déjà apparue il y a quelques instants, appuie. Si la lettre est nouvelle ou différente, ne touche à rien. Le jeu change tout seul la difficulté pendant que tu joues.",
-  stopsignal:
-    'Suis la flèche aussi vite que possible. Si le signal STOP apparaît, arrête-toi et n\'appuie plus.',
-  taskswitch:
-    'Regarde la règle en haut. Parfois on trie par COULEUR, parfois par FORME ou NOMBRE. Change de règle quand le panneau change.',
-};
+import { useProfileStore } from '../../store/profileStore';
+import { getInstructionBundle, getNarrativeForTTS } from '../../content/moduleCopy';
 
 export interface ModuleInstructionsProps {
   moduleId: ModuleId;
@@ -21,6 +9,10 @@ export interface ModuleInstructionsProps {
 }
 
 export function ModuleInstructions({ moduleId, onStart }: ModuleInstructionsProps) {
+  const activeProfile = useProfileStore((s) => s.activeProfile);
+  const version = activeProfile?.version ?? 'junior';
+  const bundle = getInstructionBundle(moduleId, version);
+
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const hasSpoken = useRef(false);
   const [selectedVoice, setSelectedVoice] = useState<SpeechSynthesisVoice | null>(null);
@@ -31,7 +23,6 @@ export function ModuleInstructions({ moduleId, onStart }: ModuleInstructionsProp
     const voices = window.speechSynthesis.getVoices();
     const frenchVoices = voices.filter((v) => /fr(-|_)?FR/i.test(v.lang));
     if (frenchVoices.length > 0) {
-      // Prioritize natural quality voices if available
       return (
         frenchVoices.find((v) => /Google|Microsoft|Amazon|Apple/.test(v.name)) || frenchVoices[0]
       );
@@ -40,7 +31,7 @@ export function ModuleInstructions({ moduleId, onStart }: ModuleInstructionsProp
   }, []);
 
   const speak = useCallback(() => {
-    const text = INSTRUCTION_TEXTS[moduleId];
+    const text = getNarrativeForTTS(moduleId, version);
     if (!text) return;
 
     if (!window.speechSynthesis) {
@@ -54,7 +45,7 @@ export function ModuleInstructions({ moduleId, onStart }: ModuleInstructionsProp
 
     const u = new SpeechSynthesisUtterance(text);
     u.lang = 'fr-FR';
-    u.rate = 0.95; // plus naturel et plus compréhensible
+    u.rate = 0.95;
     u.pitch = 1;
     u.volume = 1;
 
@@ -65,7 +56,7 @@ export function ModuleInstructions({ moduleId, onStart }: ModuleInstructionsProp
     utteranceRef.current = u;
     window.speechSynthesis.speak(u);
     hasSpoken.current = true;
-  }, [moduleId, selectedVoice]);
+  }, [moduleId, selectedVoice, version]);
 
   useEffect(() => {
     if (!window.speechSynthesis) {
@@ -99,164 +90,166 @@ export function ModuleInstructions({ moduleId, onStart }: ModuleInstructionsProp
     onStart();
   };
 
-  if (!INSTRUCTION_TEXTS[moduleId]) return null;
+  if (!bundle) return null;
 
   return (
-    <div className="junior-instructions fq-animate-in" style={styles.container}>
+    <div className="junior-instructions fq-animate-in fq-instructions">
       {!supportsSpeech && (
-        <div style={{ ...styles.warning, backgroundColor: '#ffebee', color: '#b71c1c' }}>
-          Synthèse vocale non supportée : le texte est affiché en lecture. Si possible, utilisez un navigateur moderne.
+        <div
+          style={{
+            backgroundColor: '#ffebee',
+            color: '#b71c1c',
+            padding: '10px 14px',
+            borderRadius: 'var(--radius-md)',
+            fontSize: 'var(--text-sm)',
+          }}
+        >
+          Synthèse vocale non disponible : le texte reste affiché à l’écran.
         </div>
       )}
-      <div style={styles.visual}>
+      <h2 className="fq-instructions-title">{bundle.title}</h2>
+      <p className="fq-instructions-narrative">{bundle.narrative}</p>
+      <div className="fq-instructions-steps" role="list">
+        {bundle.steps.map((step, i) => (
+          <div key={i} className="fq-instructions-step" role="listitem">
+            <span className="fq-instructions-step-num">{i + 1}</span>
+            <span>{step}</span>
+          </div>
+        ))}
+      </div>
+      <p className="fq-instructions-controls">{bundle.controlsHint}</p>
+      {bundle.commonMistake && (
+        <p className="fq-instructions-mistake">Piège fréquent : {bundle.commonMistake}</p>
+      )}
+      <div className="fq-instructions-visual">
         {moduleId === 'gonogo' && (
-          <div style={styles.gonogoVisual}>
-            <div style={{ ...styles.bubble, background: '#2e7d32' }} title="Grenouille" />
-            <span style={styles.hint}>Touche</span>
-            <div style={{ ...styles.bubble, background: '#c62828' }} title="Crapaud" />
-            <span style={styles.hint}>Ne touche pas</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap', justifyContent: 'center' }}>
+            <div style={{ width: 80, height: 80, borderRadius: '50%', background: '#2e7d32' }} title="Grenouille" />
+            <span style={{ fontSize: 'var(--text-lg)', color: 'var(--fq-text)' }}>Touche</span>
+            <div style={{ width: 80, height: 80, borderRadius: '50%', background: '#c62828' }} title="Crapaud" />
+            <span style={{ fontSize: 'var(--text-lg)', color: 'var(--fq-text)' }}>Ne touche pas</span>
           </div>
         )}
         {moduleId === 'oneback' && (
-          <div style={styles.onebackVisual}>
-            <div style={styles.animalPlaceholder}>🐾</div>
-            <span style={styles.hint}>Même qu’avant ? Touche !</span>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+            <span style={{ fontSize: 64 }}>🐾</span>
+            <span style={{ fontSize: 'var(--text-lg)', color: 'var(--fq-text)' }}>Même qu’avant ? Touche !</span>
           </div>
         )}
         {moduleId === 'dccs' && (
-          <div style={styles.dccsVisual}>
-            <div style={styles.dccsRuleRow}>
-              <span style={styles.dccsRule}>Couleur →</span>
-              <span style={styles.dccsOption}>Rouge / Bleu</span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'stretch' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ fontWeight: 'bold', color: 'var(--fq-primary)' }}>Couleur →</span>
+              <span>Rouge / Bleu</span>
             </div>
-            <div style={styles.dccsRuleRow}>
-              <span style={styles.dccsRule}>Forme →</span>
-              <span style={styles.dccsOption}>Étoile / Rond</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ fontWeight: 'bold', color: 'var(--fq-primary)' }}>Forme →</span>
+              <span>Étoile / Rond</span>
             </div>
-            <span style={styles.hint}>Regarde le panneau en haut à chaque carte</span>
+            <span style={{ fontSize: 'var(--text-sm)', color: 'var(--fq-text-muted)' }}>
+              Regarde le panneau en haut à chaque carte
+            </span>
           </div>
         )}
         {moduleId === 'cpt' && (
-          <div style={styles.standardBlock}>
-            <div style={styles.standardIcon}>A</div>
-            <span style={styles.hint}>Appuie sur X après A seulement</span>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+            <div
+              style={{
+                width: 60,
+                height: 60,
+                borderRadius: 16,
+                background: 'var(--fq-surface)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 28,
+                fontWeight: 'bold',
+                color: 'var(--fq-primary)',
+              }}
+            >
+              A
+            </div>
+            <span style={{ fontSize: 'var(--text-sm)', color: 'var(--fq-text-muted)' }}>
+              Appuie sur X après A seulement
+            </span>
           </div>
         )}
         {moduleId === 'nback' && (
-          <div style={styles.standardBlock}>
-            <div style={styles.standardIcon}>A</div>
-            <span style={styles.hint}>Si une lettre revient comme tout à l&apos;heure, appuie.</span>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+            <div
+              style={{
+                width: 60,
+                height: 60,
+                borderRadius: 16,
+                background: 'var(--fq-surface)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 28,
+                fontWeight: 'bold',
+                color: 'var(--fq-primary)',
+              }}
+            >
+              A
+            </div>
+            <span style={{ fontSize: 'var(--text-sm)', color: 'var(--fq-text-muted)' }}>
+              Si une lettre revient comme tout à l&apos;heure, appuie
+            </span>
           </div>
         )}
         {moduleId === 'stopsignal' && (
-          <div style={styles.standardBlock}>
-            <div style={styles.standardIcon}>↔</div>
-            <span style={styles.hint}>Suis la flèche, arrête-toi au STOP</span>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+            <div
+              style={{
+                width: 60,
+                height: 60,
+                borderRadius: 16,
+                background: 'var(--fq-surface)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 28,
+                fontWeight: 'bold',
+                color: 'var(--fq-primary)',
+              }}
+            >
+              ↔
+            </div>
+            <span style={{ fontSize: 'var(--text-sm)', color: 'var(--fq-text-muted)' }}>
+              Suis la flèche, arrête-toi au STOP
+            </span>
           </div>
         )}
         {moduleId === 'taskswitch' && (
-          <div style={styles.standardBlock}>
-            <div style={styles.standardIcon}>⇆</div>
-            <span style={styles.hint}>La règle en haut peut changer, suis-la</span>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+            <div
+              style={{
+                width: 60,
+                height: 60,
+                borderRadius: 16,
+                background: 'var(--fq-surface)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 28,
+                fontWeight: 'bold',
+                color: 'var(--fq-primary)',
+              }}
+            >
+              ⇆
+            </div>
+            <span style={{ fontSize: 'var(--text-sm)', color: 'var(--fq-text-muted)' }}>
+              La règle en haut peut changer
+            </span>
           </div>
         )}
       </div>
-      <button type="button" onClick={handleStart} style={styles.playBtn}>
+      <button type="button" onClick={handleStart} className="fq-btn-primary">
         Jouer
       </button>
-      <button type="button" onClick={speak} style={styles.replayBtn}>
+      <button type="button" onClick={speak} className="fq-btn-secondary">
         Réécouter
       </button>
     </div>
   );
 }
-
-const styles: Record<string, React.CSSProperties> = {
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: '50vh',
-    padding: 16,
-    gap: 24,
-    width: '100%',
-    maxWidth: 480,
-    margin: '0 auto',
-    boxSizing: 'border-box',
-  },
-  visual: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: 12,
-  },
-  gonogoVisual: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 24,
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-  },
-  bubble: {
-    width: 80,
-    height: 80,
-    borderRadius: '50%',
-  },
-  hint: {
-    fontSize: 18,
-    color: 'var(--fq-text)',
-  },
-  onebackVisual: { gap: 8 },
-  animalPlaceholder: {
-    fontSize: 64,
-  },
-  dccsVisual: { gap: 12 },
-  dccsRuleRow: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 8,
-  },
-  dccsRule: { fontWeight: 'bold', color: 'var(--fq-primary)' },
-  dccsOption: { color: 'var(--fq-text)' },
-  panelPlaceholder: {
-    fontSize: 48,
-  },
-  standardBlock: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: 8,
-  },
-  standardIcon: {
-    width: 60,
-    height: 60,
-    borderRadius: 16,
-    background: 'var(--fq-surface)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: 'var(--fq-primary)',
-  },
-  playBtn: {
-    padding: '14px 32px',
-    fontSize: 20,
-    fontWeight: 'bold',
-    background: 'var(--fq-primary)',
-    color: '#fff',
-    border: 'none',
-    borderRadius: 12,
-    cursor: 'pointer',
-  },
-  replayBtn: {
-    padding: 8,
-    fontSize: 14,
-    background: 'transparent',
-    color: 'var(--fq-text-muted)',
-    border: 'none',
-    cursor: 'pointer',
-    textDecoration: 'underline',
-  },
-};

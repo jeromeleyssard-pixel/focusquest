@@ -148,8 +148,10 @@ export function Dashboard() {
       : null;
 
   return (
-    <div className="dashboard" style={styles.container}>
-      <h2 style={styles.title}>Progression de {activeProfile.pseudo}</h2>
+    <div className="fq-page fq-dashboard-wrap dashboard">
+      <h2 className="fq-page-title" style={{ fontSize: 'var(--text-2xl)', marginBottom: 16 }}>
+        Progression de {activeProfile.pseudo}
+      </h2>
       {isJunior && (
         <p style={styles.subtitle}>
           Moyenne des 3 jeux + courbes par type d&apos;entraînement (inhibition, mémoire, flexibilité).
@@ -181,6 +183,8 @@ export function Dashboard() {
       )}
       <button
         type="button"
+        className="fq-btn-primary"
+        style={{ marginBottom: 12 }}
         onClick={() => {
           const data = JSON.stringify(activeProfile, null, 2);
           const blob = new Blob([data], { type: 'application/json' });
@@ -191,11 +195,10 @@ export function Dashboard() {
           a.click();
           URL.revokeObjectURL(url);
         }}
-        style={styles.exportBtn}
       >
         Exporter mes données
       </button>
-      <Link to="/report" style={styles.reportLink}>
+      <Link to="/report" className="fq-link" style={{ display: 'inline-block', marginBottom: 16 }}>
         Voir le rapport parent →
       </Link>
       <p style={styles.disclaimer}>
@@ -210,12 +213,6 @@ export function Dashboard() {
 }
 
 const styles: Record<string, React.CSSProperties> = {
-  container: {
-    minHeight: '100vh',
-    padding: 24,
-    color: 'var(--fq-text)',
-  },
-  title: { margin: '0 0 16px', fontSize: 22 },
   subtitle: {
     margin: '0 0 12px',
     fontSize: 14,

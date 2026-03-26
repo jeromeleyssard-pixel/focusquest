@@ -37,6 +37,7 @@ export abstract class BaseTrialScene<TSpec extends TrialSpecBase> extends Phaser
 
   private feedbackMs = 450;
   private feedbackEllipse: Phaser.GameObjects.Ellipse | null = null;
+  private trialHud: Phaser.GameObjects.Text | null = null;
 
   protected abstract renderStimulus(spec: TSpec): void;
   protected abstract mapPointerInput(pointer: Phaser.Input.Pointer): PointerInputKind | null;
@@ -69,12 +70,25 @@ export abstract class BaseTrialScene<TSpec extends TrialSpecBase> extends Phaser
   }
 
   create() {
+    this.trialHud = this.add
+      .text(this.scale.width / 2, 24, '', {
+        fontFamily: 'Arial Bold',
+        fontSize: '16px',
+        color: '#e5e7eb',
+      })
+      .setOrigin(0.5, 0)
+      .setDepth(60)
+      .setAlpha(0.92);
+    this.scale.on('resize', this.layoutHud, this);
+
     // Feedback overlay
     this.feedbackEllipse = this.add
       .ellipse(this.scale.width / 2, this.scale.height / 2, 220, 220, 0xffffff)
       .setVisible(false)
       .setStrokeStyle(4, 0xffffff)
       .setDepth(50);
+
+    this.layoutHud();
 
     // Input listeners: pointer + keyboard
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
@@ -92,6 +106,20 @@ export abstract class BaseTrialScene<TSpec extends TrialSpecBase> extends Phaser
     });
 
     this.startNextTrial();
+  }
+
+  private layoutHud = () => {
+    if (this.trialHud) {
+      this.trialHud.setPosition(this.scale.width / 2, 24);
+    }
+    if (this.feedbackEllipse) {
+      this.feedbackEllipse.setPosition(this.scale.width / 2, this.scale.height / 2);
+    }
+  };
+
+  private updateTrialHud() {
+    if (!this.trialHud) return;
+    this.trialHud.setText(`Essai ${this.currentTrialIndex} / ${this.totalTrials}`);
   }
 
   private handleResponseInput(kind: PointerInputKind) {
@@ -137,6 +165,7 @@ export abstract class BaseTrialScene<TSpec extends TrialSpecBase> extends Phaser
       this.finalizeTrial();
     });
     this.currentTrialIndex++;
+    this.updateTrialHud();
   }
 
   private finalizeTrial() {

@@ -25,12 +25,12 @@ export function ProfileCreator() {
   };
 
   return (
-    <div style={styles.container}>
-      <h2 style={styles.title}>
+    <div className="fq-page fq-page--centered">
+      <h2 className="fq-page-title" style={{ fontSize: 'var(--text-2xl)' }}>
         Nouveau joueur — {v === 'junior' ? '5 à 7 ans' : '8 à 17 ans'}
       </h2>
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <label style={styles.label}>
+      <form onSubmit={handleSubmit} className="fq-form">
+        <label className="fq-label">
           Pseudo (2–12 caractères)
           <input
             type="text"
@@ -39,20 +39,20 @@ export function ProfileCreator() {
             minLength={2}
             maxLength={12}
             placeholder="Léo, Superhéros..."
-            style={styles.input}
+            className="fq-input"
             autoFocus
           />
         </label>
-        <label style={styles.label}>
+        <label className="fq-label">
           Avatar
-          <div style={styles.avatarRow}>
+          <div className="fq-avatar-row">
             {Array.from({ length: AVATAR_OPTIONS }, (_, i) => (
               <button
                 key={i}
                 type="button"
                 onClick={() => setAvatar(i)}
+                className="fq-avatar-btn"
                 style={{
-                  ...styles.avatarBtn,
                   borderColor: avatar === i ? color : 'transparent',
                   borderWidth: avatar === i ? 3 : 1,
                 }}
@@ -63,25 +63,26 @@ export function ProfileCreator() {
                   alt={`Avatar ${i + 1}`}
                   width={64}
                   height={64}
-                  style={styles.avatarImg}
+                  style={{ display: 'block', width: 64, height: 64, objectFit: 'cover' }}
                 />
               </button>
             ))}
           </div>
         </label>
-        <label style={styles.label}>
+        <label className="fq-label">
           Couleur
-          <div style={styles.colorRow}>
+          <div className="fq-color-row">
             {COLORS.map((c) => (
               <button
                 key={c}
                 type="button"
                 onClick={() => setColor(c)}
+                className="fq-color-swatch"
                 style={{
-                  ...styles.colorBtn,
                   backgroundColor: c,
                   borderColor: color === c ? '#fff' : 'transparent',
                 }}
+                aria-label={`Couleur ${c}`}
               />
             ))}
           </div>
@@ -89,71 +90,14 @@ export function ProfileCreator() {
         <button
           type="submit"
           disabled={pseudo.trim().length < 2}
-          style={styles.submit}
+          className="fq-btn-primary"
         >
           Créer le profil
         </button>
       </form>
-      <button type="button" onClick={() => navigate('/')} style={styles.back}>
+      <button type="button" className="fq-btn-secondary" onClick={() => navigate('/')}>
         Retour
       </button>
     </div>
   );
 }
-
-const styles: Record<string, React.CSSProperties> = {
-  container: {
-    minHeight: '100vh',
-    padding: 24,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: 16,
-  },
-  title: { margin: 0, color: 'var(--fq-text)' },
-  form: { display: 'flex', flexDirection: 'column', gap: 16, width: '100%', maxWidth: 320 },
-  label: { display: 'flex', flexDirection: 'column', gap: 4, color: 'var(--fq-text)' },
-  input: { padding: 8, fontSize: 16, borderRadius: 8 },
-  avatarRow: { display: 'flex', gap: 8, flexWrap: 'wrap' },
-  avatarBtn: {
-    width: 64,
-    height: 64,
-    borderRadius: 12,
-    border: '2px solid',
-    padding: 0,
-    background: 'var(--fq-surface)',
-    color: 'var(--fq-text)',
-    cursor: 'pointer',
-    overflow: 'hidden',
-  },
-  avatarImg: {
-    display: 'block',
-    width: 64,
-    height: 64,
-    objectFit: 'cover',
-  },
-  colorRow: { display: 'flex', gap: 8 },
-  colorBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: '50%',
-    border: '2px solid',
-    cursor: 'pointer',
-  },
-  submit: {
-    padding: 12,
-    background: 'var(--fq-primary)',
-    color: '#fff',
-    border: 'none',
-    borderRadius: 8,
-    cursor: 'pointer',
-    fontSize: 16,
-  },
-  back: {
-    background: 'transparent',
-    color: 'var(--fq-text-muted)',
-    border: 'none',
-    cursor: 'pointer',
-    textDecoration: 'underline',
-  },
-};

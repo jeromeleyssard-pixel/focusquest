@@ -21,7 +21,7 @@ const NOGO_IMG = `${BASE}assets/images/junior/toad-red.svg`;
 const POND_BG = `${BASE}assets/images/junior/pond-bg.svg`;
 
 function wrapMare(stim: string): string {
-  return `<div class="gonogo-mare fq-stimulus-box" style="background-image:url(${POND_BG});background-size:cover;background-position:center;min-height:55vh;display:flex;align-items:center;justify-content:center;border-radius:12px;">${stim}</div>`;
+  return `<div class="gonogo-mare fq-stimulus-box fq-junior-paradigm" style="background-image:url(${POND_BG});background-size:cover;background-position:center;min-height:55vh;display:flex;align-items:center;justify-content:center;border-radius:12px;">${stim}</div>`;
 }
 
 export function buildGoNoGoTimeline(

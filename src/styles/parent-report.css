@@ -4,10 +4,10 @@
   max-width: 900px;
   margin: 0 auto;
   padding: 24px;
-  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  background: linear-gradient(135deg, var(--fq-bg), var(--fq-surface));
   min-height: 100vh;
-  color: #eee;
-  font-family: 'Segoe UI', system-ui, sans-serif;
+  color: var(--fq-text);
+  font-family: var(--font-body, system-ui, sans-serif);
 }
 
 .report-header {

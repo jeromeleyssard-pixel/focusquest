@@ -1,16 +1,44 @@
-/* Design tokens — couleurs, espacements, typographie */
+/* Design tokens — charte FocusQuest (Junior + Standard) */
 :root {
   --fq-primary: #0d7377;
   --fq-primary-light: #14a3a8;
+  --fq-primary-dark: #0a5c5f;
   --fq-junior: #2ec4b6;
+  --fq-junior-dark: #1fa89c;
   --fq-standard: #7b2cbf;
+  --fq-standard-dark: #5f2a9e;
   --fq-bg: #1a1a2e;
   --fq-surface: #16213e;
+  --fq-surface-elevated: #1f2a48;
   --fq-text: #e8e8e8;
   --fq-text-muted: #a0a0a0;
+  --fq-success: #22c55e;
+  --fq-warning: #f59e0b;
+  --fq-danger: #ef4444;
+
+  --font-display: 'Nunito', system-ui, sans-serif;
+  --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.75rem;
+
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-md: 16px;
   --spacing-lg: 24px;
   --spacing-xl: 32px;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-glow-primary: 0 0 24px rgba(13, 115, 119, 0.35);
 }

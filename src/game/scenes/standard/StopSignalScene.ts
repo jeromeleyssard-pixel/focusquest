@@ -62,7 +62,7 @@ export class StopSignalScene extends BaseTrialScene<StopSignalTrialSpec> {
   private createTapButtons() {
     const mk = (side: 'left' | 'right') => {
       const bg = this.add
-        .rectangle(0, 0, 200, 52, 0x2563eb, 1)
+        .rectangle(0, 0, 200, 52, 0x0d7377, 1)
         .setStrokeStyle(2, 0xffffff, 0.95)
         .setDepth(100);
       bg.setInteractive({ useHandCursor: true });

@@ -1,0 +1,16 @@
+/* Paradigmes Junior (jsPsych) — alignement charte */
+.fq-junior-paradigm {
+  font-family: var(--font-body);
+}
+
+.fq-junior-paradigm .fq-stimulus-box {
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.fq-junior-tap-hint {
+  margin-top: var(--spacing-md);
+  text-align: center;
+  font-size: var(--text-sm);
+  color: var(--fq-text-muted);
+}

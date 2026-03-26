@@ -10,7 +10,7 @@ const ANIMAL_SRC = (i: number) => `${BASE}assets/images/junior/oneback/animal${i
 const FOREST_BG = `${BASE}assets/images/junior/forest-bg.svg`;
 
 function wrapForet(html: string): string {
-  return `<div class="oneback-foret fq-stimulus-box" style="background-image:url(${FOREST_BG});background-size:cover;background-position:center;min-height:55vh;display:flex;align-items:center;justify-content:center;border-radius:12px;">${html}</div>`;
+  return `<div class="oneback-foret fq-stimulus-box fq-junior-paradigm" style="background-image:url(${FOREST_BG});background-size:cover;background-position:center;min-height:55vh;display:flex;align-items:center;justify-content:center;border-radius:12px;">${html}</div>`;
 }
 
 export interface OneBackConfig {

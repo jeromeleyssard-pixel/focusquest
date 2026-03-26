@@ -2,6 +2,8 @@ import Phaser from 'phaser';
 import { createStaircase, updateStaircase } from '../../../engine/staircase';
 import type { StaircaseConfig, StaircaseState, PhaserTrialResult } from '../../../types/adaptive';
 import { playCorrectSound, playNeutralSound } from '../../../utils/juniorFeedback';
+import { EventBus } from '../../EventBus';
+import { PHASER_EXPERIMENT_FINISHED } from '../BaseTrialScene';
 
 type Stimulus = 'A' | 'X' | 'B' | 'Y';
 
@@ -37,23 +39,38 @@ export class CPTScene extends Phaser.Scene {
   private levelIndicator: Phaser.GameObjects.Text | null = null;
   private feedbackRing: Phaser.GameObjects.Ellipse | null = null;
   private accuracyText: Phaser.GameObjects.Text | null = null;
+  private trialProgressText: Phaser.GameObjects.Text | null = null;
 
   constructor() {
     super('CPTScene');
   }
 
-  init(data: {
-    config: {
+  init(data?: {
+    config?: {
       totalTrials: number;
       staircase: StaircaseConfig;
     };
-    onExperimentFinish: (results: PhaserTrialResult[]) => void;
+    onExperimentFinish?: (results: PhaserTrialResult[]) => void;
   }) {
-    this.totalTrials = data.config.totalTrials;
-    this.staircaseConfig = data.config.staircase;
-    this.staircaseState = createStaircase(data.config.staircase);
-    this.onExperimentFinish = data.onExperimentFinish;
-    this.sequence = this.generateCPTSequence(data.config.totalTrials);
+    const defaultStaircase: StaircaseConfig = {
+      mode: '2-down-1-up',
+      targetAccuracy: 0.75,
+      stepSize: 1,
+      minLevel: 1,
+      maxLevel: 10,
+      initialLevel: 1,
+    };
+
+    if (data?.config) {
+      this.totalTrials = data.config.totalTrials;
+      this.staircaseConfig = data.config.staircase;
+    } else {
+      this.totalTrials = 30;
+      this.staircaseConfig = defaultStaircase;
+    }
+    this.staircaseState = createStaircase(this.staircaseConfig);
+    this.onExperimentFinish = data?.onExperimentFinish ?? null;
+    this.sequence = this.generateCPTSequence(this.totalTrials);
   }
 
   preload() {
@@ -62,28 +79,52 @@ export class CPTScene extends Phaser.Scene {
   }
 
   create() {
-    // Background
     this.radarBG = this.add
       .image(this.scale.width / 2, this.scale.height / 2, 'cpt-radar-bg')
       .setDisplaySize(this.scale.width * 0.8, this.scale.height * 0.7);
+    this.layoutRadarBackground();
+
+    this.trialProgressText = this.add
+      .text(this.scale.width / 2, 22, '', {
+        fontSize: '15px',
+        color: '#e5e7eb',
+        fontFamily: 'Arial Bold',
+      })
+      .setOrigin(0.5, 0)
+      .setDepth(25);
 
     // Level indicator (top-right)
     this.levelIndicator = this.add
-      .text(this.scale.width - 40, 40, `Lvl ${this.staircaseState!.currentLevel}`, {
-        fontSize: '24px',
+      .text(this.scale.width - 40, 44, `Lvl ${this.staircaseState!.currentLevel}`, {
+        fontSize: '22px',
         color: '#fff',
         fontFamily: 'Arial Bold',
       })
-      .setOrigin(1, 0);
+      .setOrigin(1, 0)
+      .setDepth(20);
 
     // Accuracy counter (top-left)
     this.accuracyText = this.add
-      .text(40, 40, '0/0 (-)', {
-        fontSize: '16px',
-        color: '#88ff88',
+      .text(40, 44, '0/0 (-)', {
+        fontSize: '15px',
+        color: '#86efac',
         fontFamily: 'Arial',
       })
-      .setOrigin(0, 0);
+      .setOrigin(0, 0)
+      .setDepth(20);
+
+    this.scale.on('resize', () => {
+      this.layoutRadarBackground();
+      if (this.trialProgressText) {
+        this.trialProgressText.setPosition(this.scale.width / 2, 22);
+      }
+      if (this.levelIndicator) {
+        this.levelIndicator.setPosition(this.scale.width - 40, 44);
+      }
+      if (this.accuracyText) {
+        this.accuracyText.setPosition(40, 44);
+      }
+    });
 
     // Letter display (center)
     this.letterText = this.add
@@ -114,7 +155,7 @@ export class CPTScene extends Phaser.Scene {
         this.scale.height - 80,
         200,
         60,
-        0x2563eb
+        0x0d7377
       )
       .setInteractive()
       .setDepth(10);
@@ -149,8 +190,20 @@ export class CPTScene extends Phaser.Scene {
       }
     });
 
-    // Start first trial
     this.startNextTrial();
+  }
+
+  private layoutRadarBackground() {
+    if (!this.radarBG) return;
+    const frame = this.textures.get('cpt-radar-bg').get();
+    const srcW = frame.width;
+    const srcH = frame.height;
+    const gw = this.scale.width;
+    const gh = this.scale.height;
+    const s = Math.max((gw * 0.92) / srcW, (gh * 0.85) / srcH);
+    this.radarBG.setDisplaySize(srcW * s, srcH * s);
+    this.radarBG.setPosition(gw / 2, gh / 2);
+    this.radarBG.setOrigin(0.5, 0.5);
   }
 
   private generateCPTSequence(n: number, targetRatio = 0.25): CPTTrial[] {
@@ -187,6 +240,12 @@ export class CPTScene extends Phaser.Scene {
     if (this.currentTrial >= this.totalTrials) {
       this.finishExperiment();
       return;
+    }
+
+    if (this.trialProgressText) {
+      this.trialProgressText.setText(
+        `Essai ${this.currentTrial + 1} / ${this.totalTrials}`
+      );
     }
 
     const trial = this.sequence[this.currentSequenceIndex];
@@ -317,6 +376,14 @@ export class CPTScene extends Phaser.Scene {
     if (this.onExperimentFinish) {
       this.onExperimentFinish(this.results);
     }
+    EventBus.emit(PHASER_EXPERIMENT_FINISHED, {
+      moduleId: 'cpt',
+      results: this.results.map((r) => ({
+        correct: r.correct,
+        reactionTimeMs: r.reactionTimeMs,
+        difficultyLevel: r.difficultyLevel,
+      })),
+    });
     this.scene.stop();
   }
 

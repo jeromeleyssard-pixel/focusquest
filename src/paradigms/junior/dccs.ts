@@ -8,7 +8,7 @@ const BASE = typeof import.meta !== 'undefined' && import.meta.env?.BASE_URL != 
 const LAB_BG = `${BASE}assets/images/junior/lab-bg.svg`;
 
 function wrapLab(html: string): string {
-  return `<div class="dccs-lab fq-stimulus-box" style="background-image:url(${LAB_BG});background-size:cover;background-position:center;min-height:55vh;padding:16px;border-radius:12px;">${html}</div>`;
+  return `<div class="dccs-lab fq-stimulus-box fq-junior-paradigm" style="background-image:url(${LAB_BG});background-size:cover;background-position:center;min-height:55vh;padding:16px;border-radius:12px;">${html}</div>`;
 }
 
 type Rule = 'color' | 'shape';
