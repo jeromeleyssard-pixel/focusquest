@@ -105,6 +105,8 @@ export function SessionWrapper() {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [showPauseOverlay, setShowPauseOverlay] = useState(false);
   const [showDisclaimer, setShowDisclaimer] = useState(true);
+  const [phaserActive, setPhaserActive] = useState(false);
+  const [phaserError, setPhaserError] = useState<string | null>(null);
   const [restartCount, setRestartCount] = useState(0);
   const lastPauseAtRef = useRef(0);
   const lastSegmentSavedAtRef = useRef(0);
@@ -276,6 +278,10 @@ export function SessionWrapper() {
     if (!containerRef.current || !activeProfile) return;
     void restartCount;
 
+    // Réinitialiser les indicateurs Phaser à chaque (re)démarrage
+    setPhaserActive(false);
+    setPhaserError(null);
+
     if (isStandard && getSessionUsedSeconds() >= sessionMaxSeconds) {
       window.alert('Temps maximum atteint pour cette session Standard. Reviens plus tard.');
       navigate('/menu', { replace: true });
@@ -308,6 +314,7 @@ export function SessionWrapper() {
 
       void (async () => {
         try {
+          setPhaserActive(true);
           const results = await runPhaserScene<AnyTrialResult[]>(
             sceneClass,
             phaserParentIdRef.current,
@@ -341,6 +348,12 @@ export function SessionWrapper() {
         } catch (e) {
           if (abort.signal.aborted) return;
           console.error('Phaser execution failed, fallback jsPsych:', e);
+          setPhaserActive(false);
+          setPhaserError(
+            e instanceof Error
+              ? `Phaser indisponible (${e.message}) — retour au mode classique.`
+              : 'Phaser indisponible — retour au mode classique.'
+          );
 
           const jsPsych = initJsPsych({
             display_element: containerRef.current!,
@@ -604,19 +617,36 @@ export function SessionWrapper() {
         </div>
       )}
       {isTimedVersion && (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8, flexShrink: 0 }}>
-          {isJunior ? (
-            <SnailTimer
-              elapsedSeconds={elapsedSeconds}
-              sessionUsedSeconds={getSessionUsedSeconds()}
-              maxSeconds={sessionMaxSeconds}
-              pauseIntervalSeconds={pauseIntervalSeconds}
-            />
-          ) : (
-            <div style={{ fontSize: 14, color: 'var(--fq-text-muted)' }}>
-              Session Standard: {Math.min(sessionMaxSeconds, getSessionUsedSeconds() + elapsedSeconds)} / {sessionMaxSeconds}s
-            </div>
-          )}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: 8,
+            flexShrink: 0,
+            gap: 8,
+          }}
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1 }}>
+            {isJunior ? (
+              <SnailTimer
+                elapsedSeconds={elapsedSeconds}
+                sessionUsedSeconds={getSessionUsedSeconds()}
+                maxSeconds={sessionMaxSeconds}
+                pauseIntervalSeconds={pauseIntervalSeconds}
+              />
+            ) : (
+              <>
+                <div style={{ fontSize: 14, color: 'var(--fq-text-muted)' }}>
+                  Session Standard: {Math.min(sessionMaxSeconds, getSessionUsedSeconds() + elapsedSeconds)} / {sessionMaxSeconds}s
+                </div>
+                <div style={{ fontSize: 11, color: 'var(--fq-text-muted)' }}>
+                  {phaserActive && 'Mode expérimental Phaser actif.'}
+                  {!phaserActive && phaserError && phaserError}
+                </div>
+              </>
+            )}
+          </div>
           <button
             type="button"
             onClick={handleQuit}
@@ -628,6 +658,7 @@ export function SessionWrapper() {
               border: '1px solid var(--fq-text-muted)',
               borderRadius: 8,
               cursor: 'pointer',
+              whiteSpace: 'nowrap',
             }}
           >
             Arrêter
