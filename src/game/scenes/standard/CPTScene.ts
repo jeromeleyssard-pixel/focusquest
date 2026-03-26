@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { createStaircase, updateStaircase } from '../../../engine/staircase';
 import type { StaircaseConfig, StaircaseState, PhaserTrialResult } from '../../../types/adaptive';
-import { playCorrectSound } from '../../../utils/juniorFeedback';
+import { playCorrectSound, playNeutralSound } from '../../../utils/juniorFeedback';
 
 type Stimulus = 'A' | 'X' | 'B' | 'Y';
 
@@ -24,6 +24,8 @@ export class CPTScene extends Phaser.Scene {
   private responseWindowStart = 0;
   private stimulusDisplayTime = 0;
   private responseDeadline = 0;
+  private responseTimeMs: number | null = null;
+  private preTrialLevel = 1;
   private staircaseState: StaircaseState | null = null;
   private staircaseConfig: StaircaseConfig | null = null;
   private results: PhaserTrialResult[] = [];
@@ -129,6 +131,9 @@ export class CPTScene extends Phaser.Scene {
     tapBtn.on('pointerdown', () => {
       if (this.currentTrial < this.totalTrials) {
         this.respondedThisTrial = true;
+        if (this.responseTimeMs == null) {
+          this.responseTimeMs = this.time.now - this.stimulusDisplayTime;
+        }
         this.showFeedback();
       }
     });
@@ -137,6 +142,9 @@ export class CPTScene extends Phaser.Scene {
     this.input.keyboard?.on('keydown-SPACE', () => {
       if (this.currentTrial < this.totalTrials) {
         this.respondedThisTrial = true;
+        if (this.responseTimeMs == null) {
+          this.responseTimeMs = this.time.now - this.stimulusDisplayTime;
+        }
         this.showFeedback();
       }
     });
@@ -188,11 +196,13 @@ export class CPTScene extends Phaser.Scene {
     }
 
     const level = this.staircaseState!.currentLevel;
+    this.preTrialLevel = level;
     const duration = Math.max(500, 900 - (level - 1) * 35);
     const window = Math.max(2200, 3200 - (level - 1) * 80);
 
     // Show letter
     this.respondedThisTrial = false;
+    this.responseTimeMs = null;
     this.displayLetter(trial.stimulus);
     this.stimulusDisplayTime = this.time.now;
     this.responseWindowStart = this.time.now + duration;
@@ -235,9 +245,6 @@ export class CPTScene extends Phaser.Scene {
 
     this.feedbackRing.setVisible(true).setAlpha(1);
 
-    // Play sound
-    playCorrectSound();
-
     // Pulse animation
     this.tweens.add({
       targets: this.feedbackRing,
@@ -256,6 +263,9 @@ export class CPTScene extends Phaser.Scene {
     const responded = this.respondedThisTrial;
     const correct = trial.isTarget ? responded : !responded;
 
+    if (correct) playCorrectSound();
+    else playNeutralSound();
+
     // Update staircase
     this.staircaseState = updateStaircase(
       this.staircaseState!,
@@ -273,10 +283,10 @@ export class CPTScene extends Phaser.Scene {
       stimulus: trial.stimulus,
       response: responded ? 'keypress' : null,
       reactionTimeMs: responded
-        ? Math.max(0, this.time.now - this.responseWindowStart)
+        ? Math.max(0, this.responseTimeMs ?? 0)
         : 0,
       correct,
-      difficultyLevel: this.staircaseState.currentLevel,
+      difficultyLevel: this.preTrialLevel,
       isTarget: trial.isTarget,
     };
 

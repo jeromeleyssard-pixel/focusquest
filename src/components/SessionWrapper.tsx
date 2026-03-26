@@ -13,6 +13,12 @@ import { buildTaskSwitchTimeline } from '../paradigms/standard/taskswitch';
 import { computeRTISV } from '../engine/metrics';
 import { ModuleInstructions } from './junior/ModuleInstructions';
 import { SnailTimer } from './junior/SnailTimer';
+import { runPhaserScene } from '../hooks/usePhaserGame';
+import type { AnyTrialResult } from '../game/trialControllers/types';
+import { CPTScene } from '../game/scenes/standard/CPTScene';
+import { NBackScene } from '../game/scenes/standard/NBackScene';
+import { StopSignalScene } from '../game/scenes/standard/StopSignalScene';
+import { TaskSwitchScene } from '../game/scenes/standard/TaskSwitchScene';
 
 const JUNIOR_SESSION_MAX_SECONDS = 10 * 60;
 const JUNIOR_PAUSE_INTERVAL_SECONDS = 3 * 60; // pause proposée toutes les 3 min
@@ -73,6 +79,8 @@ export function SessionWrapper() {
   const { moduleId } = useParams<{ moduleId: string }>();
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
+  const phaserParentIdRef = useRef(`fq-phaser-${Math.random().toString(36).slice(2)}`);
+  const phaserAbortRef = useRef<AbortController | null>(null);
   const activeProfile = useProfileStore((s) => s.activeProfile);
   const updateLevel = useProfileStore((s) => s.updateLevel);
   const addSession = useProfileStore((s) => s.addSession);
@@ -274,11 +282,92 @@ export function SessionWrapper() {
       return;
     }
 
+    const level = activeProfile.currentLevels[validId] ?? 1;
+
+    const usePhaserRenderer = activeProfile.version === 'standard' && STANDARD_MODULES.includes(validId);
+
+    if (usePhaserRenderer) {
+      const sceneClass = (() => {
+        switch (validId) {
+          case 'cpt':
+            return CPTScene;
+          case 'nback':
+            return NBackScene;
+          case 'stopsignal':
+            return StopSignalScene;
+          case 'taskswitch':
+            return TaskSwitchScene;
+          default:
+            return CPTScene;
+        }
+      })();
+
+      const abort = new AbortController();
+      phaserAbortRef.current = abort;
+      const startAt = Date.now();
+
+      void (async () => {
+        try {
+          const results = await runPhaserScene<AnyTrialResult[]>(
+            sceneClass,
+            phaserParentIdRef.current,
+            { signal: abort.signal }
+          );
+
+          if (abort.signal.aborted) return;
+
+          const correctCount = results.filter((r) => r.correct).length;
+          const accuracyPct = results.length > 0 ? (correctCount / results.length) * 100 : 0;
+          const finalLevel = results.at(-1)?.difficultyLevel ?? level;
+          const durationSeconds = Math.max(1, Math.round((Date.now() - startAt) / 1000));
+
+          updateLevel(validId, finalLevel);
+          addSession({
+            month: new Date().toISOString().slice(0, 7),
+            moduleId: validId,
+            level: finalLevel,
+            accuracy: Math.round(accuracyPct),
+            durationSeconds,
+          });
+
+          if (isTimedVersion) {
+            addSessionUsedSeconds(durationSeconds);
+            if (getSessionUsedSeconds() >= sessionMaxSeconds) {
+              resetSessionUsed();
+            }
+          }
+
+          navigate('/menu', { replace: true });
+        } catch (e) {
+          if (abort.signal.aborted) return;
+          console.error('Phaser execution failed, fallback jsPsych:', e);
+
+          const jsPsych = initJsPsych({
+            display_element: containerRef.current!,
+          });
+          sessionRef.current = { jsPsych, level, ended: false };
+          const timeline = buildTimelineForModule(validId, jsPsych, level);
+          void jsPsych
+            .run(timeline as Parameters<ReturnType<typeof initJsPsych>['run']>[0])
+            .then(() => {
+              if (sessionRef.current?.ended) return;
+              finishAndNavigate(jsPsych, level, false);
+            })
+            .catch(() => navigate('/menu', { replace: true }));
+        } finally {
+          if (phaserAbortRef.current === abort) phaserAbortRef.current = null;
+        }
+      })();
+
+      return () => {
+        abort.abort();
+      };
+    }
+
     const jsPsych = initJsPsych({
       display_element: containerRef.current,
     });
 
-    const level = activeProfile.currentLevels[validId] ?? 1;
     sessionRef.current = { jsPsych, level, ended: false };
     const timeline = buildTimelineForModule(validId, jsPsych, level);
 
@@ -358,6 +447,12 @@ export function SessionWrapper() {
   ]);
 
   const handleQuit = () => {
+    if (phaserAbortRef.current) {
+      phaserAbortRef.current.abort();
+      phaserAbortRef.current = null;
+      navigate('/menu', { replace: true });
+      return;
+    }
     if (timelineEndedRef.current) {
       timelineEndedRef.current = false;
       navigate('/menu', { replace: true });
@@ -465,6 +560,7 @@ export function SessionWrapper() {
               textAlign: 'center',
               maxWidth: 320,
             }}
+            className="fq-animate-in"
           >
             <p style={{ fontSize: 18, margin: '0 0 16px', color: 'var(--fq-text)' }}>
               Pause — Veux-tu continuer ?
@@ -540,6 +636,7 @@ export function SessionWrapper() {
       )}
       <div
         ref={containerRef}
+        id={phaserParentIdRef.current}
         className="jspsych-container"
         style={{ minHeight: '60vh', flex: 1 }}
       />

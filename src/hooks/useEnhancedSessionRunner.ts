@@ -7,6 +7,9 @@ import { useProfileStore } from '../store/profileStore';
 import { useTaskManager } from '../store/taskManager';
 import { GoNoGoScene } from '../game/scenes/junior/GoNoGoScene';
 import { CPTScene } from '../game/scenes/standard/CPTScene';
+import { StopSignalScene } from '../game/scenes/standard/StopSignalScene';
+import { NBackScene } from '../game/scenes/standard/NBackScene';
+import { TaskSwitchScene } from '../game/scenes/standard/TaskSwitchScene';
 import { runPhaserScene } from '../hooks/usePhaserGame';
 
 /**
@@ -36,6 +39,12 @@ export function useEnhancedSessionRunner() {
           sceneClass = GoNoGoScene;
         } else if (moduleId === 'cpt') {
           sceneClass = CPTScene;
+        } else if (moduleId === 'stopsignal') {
+          sceneClass = StopSignalScene;
+        } else if (moduleId === 'nback') {
+          sceneClass = NBackScene;
+        } else if (moduleId === 'taskswitch') {
+          sceneClass = TaskSwitchScene;
         } else {
           throw new Error(`Phaser scene not implemented for module: ${moduleId}`);
         }

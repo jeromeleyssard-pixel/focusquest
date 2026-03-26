@@ -102,7 +102,7 @@ export function ModuleInstructions({ moduleId, onStart }: ModuleInstructionsProp
   if (!INSTRUCTION_TEXTS[moduleId]) return null;
 
   return (
-    <div className="junior-instructions" style={styles.container}>
+    <div className="junior-instructions fq-animate-in" style={styles.container}>
       {!supportsSpeech && (
         <div style={{ ...styles.warning, backgroundColor: '#ffebee', color: '#b71c1c' }}>
           Synthèse vocale non supportée : le texte est affiché en lecture. Si possible, utilisez un navigateur moderne.

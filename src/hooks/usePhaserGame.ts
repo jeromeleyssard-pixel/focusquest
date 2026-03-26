@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react';
 import Phaser from 'phaser';
+import { EventBus } from '../game/EventBus';
+import { PHASER_EXPERIMENT_FINISHED } from '../game/scenes/BaseTrialScene';
 
 export interface PhaserGameConfig {
   parentId: string;
@@ -77,14 +79,26 @@ export function usePhaserGame(
  */
 export async function runPhaserScene<T>(
   sceneClass: typeof Phaser.Scene,
-  parentId: string
+  parentId: string,
+  options?: { signal?: AbortSignal }
 ): Promise<T> {
-  return new Promise((_resolve, reject) => {
+  return new Promise((resolve, reject) => {
     const parent = document.getElementById(parentId);
     if (!parent) {
       reject(new Error(`Parent element "${parentId}" not found`));
       return;
     }
+
+    let game: Phaser.Game | null = null;
+    const handler = (payload: { results?: unknown; moduleId?: string }) => {
+      if (!payload || payload.results == null) return;
+      EventBus.off(PHASER_EXPERIMENT_FINISHED, handler);
+      game?.destroy(true);
+      game = null;
+      resolve(payload.results as T);
+    };
+
+    EventBus.on(PHASER_EXPERIMENT_FINISHED, handler);
 
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
@@ -105,10 +119,17 @@ export async function runPhaserScene<T>(
       },
     };
 
-    new Phaser.Game(config);
+    game = new Phaser.Game(config);
 
-    // For now, resolve immediately - scenes handle their own completion
-    // In a full implementation, scenes would emit events to resolve the promise
-    _resolve(null as unknown as T);
+    if (options?.signal) {
+      const onAbort = () => {
+        EventBus.off(PHASER_EXPERIMENT_FINISHED, handler);
+        game?.destroy(true);
+        game = null;
+        reject(new Error('aborted'));
+      };
+      if (options.signal.aborted) onAbort();
+      else options.signal.addEventListener('abort', onAbort, { once: true });
+    }
   });
 }
