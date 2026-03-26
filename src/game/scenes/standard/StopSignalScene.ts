@@ -14,7 +14,7 @@ export class StopSignalScene extends BaseTrialScene<StopSignalTrialSpec> {
     super('StopSignalScene');
     this.totalTrials = 48;
     this.moduleId = 'stopsignal';
-    this.controller = new StopSignalController({}); // default config matches jsPsych renderer
+    this.controller = new StopSignalController({});
   }
 
   private bgImage: Phaser.GameObjects.Image | null = null;
@@ -22,12 +22,88 @@ export class StopSignalScene extends BaseTrialScene<StopSignalTrialSpec> {
   private stopBadge: Phaser.GameObjects.Container | null = null;
   private pressedHint: Phaser.GameObjects.Text | null = null;
 
+  private leftTapBg: Phaser.GameObjects.Rectangle | null = null;
+  private leftTapLabel: Phaser.GameObjects.Text | null = null;
+  private rightTapBg: Phaser.GameObjects.Rectangle | null = null;
+  private rightTapLabel: Phaser.GameObjects.Text | null = null;
+
   preload() {
     this.load.image('stop-bg', STOP_BG_URL);
   }
 
+  create() {
+    this.scale.on('resize', this.onGameResize, this);
+    this.createTapButtons();
+    super.create();
+    this.onGameResize();
+  }
+
+  private onGameResize = () => {
+    this.layoutRoadBackground();
+    this.layoutTapButtons();
+  };
+
+  /**
+   * Remplit l’écran sans déformer le SVG (équivalent CSS object-fit: cover).
+   */
+  private layoutRoadBackground() {
+    if (!this.bgImage) return;
+    const frame = this.textures.get('stop-bg').get();
+    const srcW = frame.width;
+    const srcH = frame.height;
+    const gw = this.scale.width;
+    const gh = this.scale.height;
+    const s = Math.max(gw / srcW, gh / srcH);
+    this.bgImage.setDisplaySize(srcW * s, srcH * s);
+    this.bgImage.setPosition(gw / 2, gh / 2);
+    this.bgImage.setOrigin(0.5, 0.5);
+  }
+
+  private createTapButtons() {
+    const mk = (side: 'left' | 'right') => {
+      const bg = this.add
+        .rectangle(0, 0, 200, 52, 0x2563eb, 1)
+        .setStrokeStyle(2, 0xffffff, 0.95)
+        .setDepth(100);
+      bg.setInteractive({ useHandCursor: true });
+      const label = this.add
+        .text(0, 0, side === 'left' ? '← Gauche' : 'Droite →', {
+          fontFamily: 'Arial Bold',
+          fontSize: '20px',
+          color: '#ffffff',
+        })
+        .setOrigin(0.5)
+        .setDepth(101);
+      return { bg, label };
+    };
+    const L = mk('left');
+    const R = mk('right');
+    this.leftTapBg = L.bg;
+    this.leftTapLabel = L.label;
+    this.rightTapBg = R.bg;
+    this.rightTapLabel = R.label;
+  }
+
+  private layoutTapButtons() {
+    if (!this.leftTapBg || !this.rightTapBg || !this.leftTapLabel || !this.rightTapLabel) return;
+    const gw = this.scale.width;
+    const gh = this.scale.height;
+    const w = Math.min(gw * 0.4, 300);
+    const h = Math.max(44, Math.min(56, gh * 0.085));
+    const y = gh - h / 2 - 14;
+    const xL = gw * 0.25;
+    const xR = gw * 0.75;
+
+    this.leftTapBg.setPosition(xL, y);
+    this.leftTapBg.setSize(w, h);
+    this.leftTapLabel.setPosition(xL, y);
+
+    this.rightTapBg.setPosition(xR, y);
+    this.rightTapBg.setSize(w, h);
+    this.rightTapLabel.setPosition(xR, y);
+  }
+
   private setPressedVisual(kind: 'left' | 'right') {
-    // Small immediate feedback: tint the arrow slightly
     if (this.arrowText) {
       this.arrowText.setColor(kind === 'left' ? '#93c5fd' : '#fca5a5');
       this.tweens.add({
@@ -38,6 +114,14 @@ export class StopSignalScene extends BaseTrialScene<StopSignalTrialSpec> {
         hold: 0,
       });
     }
+    const flash = (bg: Phaser.GameObjects.Rectangle | null) => {
+      if (!bg) return;
+      const prev = bg.fillColor;
+      bg.setFillStyle(0x1e40af, 1);
+      this.time.delayedCall(120, () => bg.setFillStyle(prev, 1));
+    };
+    flash(kind === 'left' ? this.leftTapBg : this.rightTapBg);
+
     if (this.pressedHint) {
       this.pressedHint.setText(kind === 'left' ? 'GO ←' : 'GO →');
       this.pressedHint.setAlpha(1);
@@ -50,15 +134,12 @@ export class StopSignalScene extends BaseTrialScene<StopSignalTrialSpec> {
   }
 
   renderStimulus(spec: StopSignalTrialSpec) {
-    // Reset
     this.stopBadge?.destroy();
     this.stopBadge = null;
 
     if (!this.bgImage) {
-      this.bgImage = this.add
-        .image(this.scale.width / 2, 0, 'stop-bg')
-        .setOrigin(0.5, 0);
-      this.bgImage.setDisplaySize(this.scale.width, this.scale.height);
+      this.bgImage = this.add.image(this.scale.width / 2, this.scale.height / 2, 'stop-bg').setDepth(0);
+      this.layoutRoadBackground();
     }
 
     if (!this.arrowText) {
@@ -68,14 +149,14 @@ export class StopSignalScene extends BaseTrialScene<StopSignalTrialSpec> {
           fontSize: `${Math.min(90, Math.round(this.scale.width * 0.22))}px`,
           color: '#ffffff',
         })
-        .setOrigin(0.5);
+        .setOrigin(0.5)
+        .setDepth(15);
       this.arrowText.setShadow(0, 2, '#000000', 8, true, true);
     }
 
     const arrow = spec.goLeft ? '←' : '→';
     this.arrowText.setText(arrow);
 
-    // Show STOP for inhibition trials without covering the decorative background circles
     if (spec.isStopTrial) {
       this.arrowText.setAlpha(0.0);
 
@@ -84,25 +165,35 @@ export class StopSignalScene extends BaseTrialScene<StopSignalTrialSpec> {
 
       const badgeBg = this.add
         .rectangle(this.scale.width / 2, this.scale.height / 2, badgeWidth, badgeHeight, 0xef4444, 1)
-        .setOrigin(0.5);
+        .setOrigin(0.5)
+        .setDepth(20);
 
       badgeBg.setStrokeStyle(3, 0xffffff, 0.9);
 
       const badgeText = this.add
         .text(this.scale.width / 2, this.scale.height / 2, 'STOP', {
           fontFamily: 'Arial Bold',
-          fontSize: `${Math.min(36, Math.round(this.scale.width * 0.10))}px`,
+          fontSize: `${Math.min(36, Math.round(this.scale.width * 0.1))}px`,
           color: '#ffffff',
         })
-        .setOrigin(0.5);
+        .setOrigin(0.5)
+        .setDepth(21);
 
       this.stopBadge = this.add.container(0, 0, [badgeBg, badgeText]);
-      this.stopBadge.setDepth(20);
+      this.stopBadge.setDepth(22);
+
+      this.leftTapBg?.setAlpha(0.45);
+      this.rightTapBg?.setAlpha(0.45);
+      this.leftTapLabel?.setAlpha(0.7);
+      this.rightTapLabel?.setAlpha(0.7);
     } else {
       this.arrowText.setAlpha(1.0);
+      this.leftTapBg?.setAlpha(1);
+      this.rightTapBg?.setAlpha(1);
+      this.leftTapLabel?.setAlpha(1);
+      this.rightTapLabel?.setAlpha(1);
     }
 
-    // Prepare pressed hint (hidden unless a response occurs)
     if (!this.pressedHint) {
       this.pressedHint = this.add
         .text(this.scale.width / 2, this.scale.height - 90, '', {
@@ -110,13 +201,13 @@ export class StopSignalScene extends BaseTrialScene<StopSignalTrialSpec> {
           fontSize: `${Math.min(22, Math.round(this.scale.width * 0.06))}px`,
           color: '#e5e7eb',
         })
-        .setOrigin(0.5);
+        .setOrigin(0.5)
+        .setDepth(16);
     }
     this.pressedHint.setAlpha(0);
   }
 
   mapPointerInput(pointer: Phaser.Input.Pointer) {
-    // Tap zones: left half => left, right half => right
     return pointer.x < this.scale.width / 2 ? 'left' : 'right';
   }
 
@@ -126,8 +217,7 @@ export class StopSignalScene extends BaseTrialScene<StopSignalTrialSpec> {
     return null;
   }
 
-  mapControllerResponseFromInput(spec: StopSignalTrialSpec, kind: 'space' | 'left' | 'right') {
-    // For Stop-Signal we ignore SPACE and only accept left/right.
+  mapControllerResponseFromInput(_spec: StopSignalTrialSpec, kind: 'space' | 'left' | 'right') {
     if (kind === 'left') {
       this.setPressedVisual('left');
       return 'left' as StopSignalResponse;
@@ -149,4 +239,3 @@ export class StopSignalScene extends BaseTrialScene<StopSignalTrialSpec> {
     else playNeutralSound();
   }
 }
-
