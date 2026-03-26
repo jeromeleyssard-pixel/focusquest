@@ -669,7 +669,7 @@ export function SessionWrapper() {
         ref={containerRef}
         id={phaserParentIdRef.current}
         className="jspsych-container"
-        style={{ minHeight: '60vh', flex: 1 }}
+        style={{ flex: 1, minHeight: 0, width: '100%' }}
       />
     </div>
   );

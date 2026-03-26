@@ -39,15 +39,31 @@ body {
 }
 
 .session-layout .jspsych-container {
-  flex: 1;
-  min-height: 60vh;
+  flex: 1 1 auto;
+  /* Important: sans min-height: 0, le flex peut dépasser le viewport et le canvas Phaser “sort” de l’écran */
+  min-height: 0;
+  max-height: calc(100vh - 140px);
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
+  contain: layout;
 }
 
 .session-layout .jspsych-container > div {
   width: 100%;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.session-layout .jspsych-container canvas {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
 }
 
 @media (max-width: 600px) {

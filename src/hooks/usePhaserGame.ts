@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import Phaser from 'phaser';
 import { EventBus } from '../game/EventBus';
 import { PHASER_EXPERIMENT_FINISHED } from '../game/scenes/BaseTrialScene';
+import { measurePhaserParent } from './phaserParentSize';
 
 export interface PhaserGameConfig {
   parentId: string;
@@ -33,33 +34,63 @@ export function usePhaserGame(
       return;
     }
 
-    const config: Phaser.Types.Core.GameConfig = {
-      type: Phaser.AUTO,
-      width: 1024,
-      height: 768,
-      parent: parentId,
-      backgroundColor: '#1A1A2E',
-      scene: sceneClass,
-      physics: {
-        default: 'arcade',
-        arcade: {
-          debug: false,
+    let resizeObserver: ResizeObserver | null = null;
+    let onResize: (() => void) | null = null;
+
+    const startGame = () => {
+      const { width, height } = measurePhaserParent(parent);
+
+      const config: Phaser.Types.Core.GameConfig = {
+        type: Phaser.AUTO,
+        width,
+        height,
+        parent: parentId,
+        backgroundColor: '#1A1A2E',
+        scene: sceneClass,
+        physics: {
+          default: 'arcade',
+          arcade: {
+            debug: false,
+          },
         },
-      },
-      scale: {
-        mode: Phaser.Scale.FIT,
-        autoCenter: Phaser.Scale.CENTER_BOTH,
-      },
+        scale: {
+          mode: Phaser.Scale.FIT,
+          autoCenter: Phaser.Scale.CENTER_BOTH,
+        },
+      };
+
+      gameRef.current = new Phaser.Game(config);
+      isReadyRef.current = true;
+
+      if (onReady) {
+        onReady(gameRef.current);
+      }
+
+      const applySize = () => {
+        if (!gameRef.current) return;
+        const next = measurePhaserParent(parent);
+        if (next.width > 0 && next.height > 0) {
+          gameRef.current.scale.resize(next.width, next.height);
+        }
+      };
+
+      resizeObserver = new ResizeObserver(() => applySize());
+      resizeObserver.observe(parent);
+      onResize = () => applySize();
+      window.addEventListener('resize', onResize);
+      window.visualViewport?.addEventListener('resize', onResize);
     };
 
-    gameRef.current = new Phaser.Game(config);
-    isReadyRef.current = true;
-
-    if (onReady) {
-      onReady(gameRef.current);
-    }
+    requestAnimationFrame(() => {
+      requestAnimationFrame(startGame);
+    });
 
     return () => {
+      if (resizeObserver) resizeObserver.disconnect();
+      if (onResize) {
+        window.removeEventListener('resize', onResize);
+        window.visualViewport?.removeEventListener('resize', onResize);
+      }
       if (gameRef.current) {
         gameRef.current.destroy(true);
         gameRef.current = null;
@@ -90,9 +121,25 @@ export async function runPhaserScene<T>(
     }
 
     let game: Phaser.Game | null = null;
+    let resizeObserver: ResizeObserver | null = null;
+    let onResize: (() => void) | null = null;
+
+    const cleanup = () => {
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+        resizeObserver = null;
+      }
+      if (onResize && typeof window !== 'undefined') {
+        window.removeEventListener('resize', onResize);
+        window.visualViewport?.removeEventListener('resize', onResize);
+        onResize = null;
+      }
+    };
+
     const handler = (payload: { results?: unknown; moduleId?: string }) => {
       if (!payload || payload.results == null) return;
       EventBus.off(PHASER_EXPERIMENT_FINISHED, handler);
+      cleanup();
       game?.destroy(true);
       game = null;
       resolve(payload.results as T);
@@ -100,30 +147,59 @@ export async function runPhaserScene<T>(
 
     EventBus.on(PHASER_EXPERIMENT_FINISHED, handler);
 
-    const config: Phaser.Types.Core.GameConfig = {
-      type: Phaser.AUTO,
-      width: 1024,
-      height: 768,
-      parent: parentId,
-      backgroundColor: '#1A1A2E',
-      scene: sceneClass,
-      physics: {
-        default: 'arcade',
-        arcade: {
-          debug: false,
-        },
-      },
-      scale: {
-        mode: Phaser.Scale.FIT,
-        autoCenter: Phaser.Scale.CENTER_BOTH,
-      },
+    const applySize = () => {
+      if (!game) return;
+      const { width, height } = measurePhaserParent(parent);
+      if (width > 0 && height > 0) {
+        game.scale.resize(width, height);
+      }
     };
 
-    game = new Phaser.Game(config);
+    const startGame = () => {
+      const { width, height } = measurePhaserParent(parent);
+
+      const config: Phaser.Types.Core.GameConfig = {
+        type: Phaser.AUTO,
+        width,
+        height,
+        parent: parentId,
+        backgroundColor: '#1A1A2E',
+        scene: sceneClass,
+        physics: {
+          default: 'arcade',
+          arcade: {
+            debug: false,
+          },
+        },
+        scale: {
+          mode: Phaser.Scale.FIT,
+          autoCenter: Phaser.Scale.CENTER_BOTH,
+        },
+      };
+
+      game = new Phaser.Game(config);
+
+      resizeObserver = new ResizeObserver(() => {
+        applySize();
+      });
+      resizeObserver.observe(parent);
+
+      onResize = () => applySize();
+      window.addEventListener('resize', onResize);
+      window.visualViewport?.addEventListener('resize', onResize);
+    };
+
+    const runStart = () => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(startGame);
+      });
+    };
+    runStart();
 
     if (options?.signal) {
       const onAbort = () => {
         EventBus.off(PHASER_EXPERIMENT_FINISHED, handler);
+        cleanup();
         game?.destroy(true);
         game = null;
         reject(new Error('aborted'));
