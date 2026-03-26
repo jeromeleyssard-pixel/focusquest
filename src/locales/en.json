@@ -8,5 +8,28 @@
     "standard": "Ages 8–17",
     "choose": "Choose the version for the child"
   },
-  "disclaimer": "FocusQuest is a cognitive training tool. It is not a medical device, does not treat ADHD, and does not replace care by a health professional."
+  "disclaimer": "FocusQuest is a cognitive training tool. It is not a medical device, does not treat ADHD, and does not replace care by a health professional.",
+  "parentReport": {
+    "title": "Performance Report",
+    "totalSessions": "Total Sessions",
+    "averageAccuracy": "Average Accuracy",
+    "wcagStandard": "WCAG AAA standard: ≥75%",
+    "currentLevel": "Current Level",
+    "engagement": "Engagement",
+    "lastSession": "Last session: ",
+    "accuracyChart": "Accuracy (%)",
+    "levelChart": "Level",
+    "cognitiveAssessment": "Cognitive Assessment",
+    "domains": {
+      "inhibition": "Inhibition",
+      "workingMemory": "Working Memory",
+      "attention": "Attention",
+      "switching": "Task Switching"
+    },
+    "sessions": "sessions",
+    "printNote": "Use your browser's Print function (Ctrl+P) to save this report as PDF",
+    "executiveSummary": "Executive Summary",
+    "adaptiveDifficulty": "Adaptive difficulty",
+    "minutesInvested": "minutes invested"
+  }
 }

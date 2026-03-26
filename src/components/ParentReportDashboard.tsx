@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useProfileStore } from '../store/profileStore';
 import type { SessionSummary } from '../types/session';
 import type { PlayerProfile } from '../types/profile';
@@ -9,34 +10,35 @@ import '../styles/parent-report.css';
  * Shows: Progress trajectories, cognitive strengths, recommendations, alerts
  */
 export function ParentReportDashboard() {
+  const { t } = useTranslation();
   const activeProfile = useProfileStore((s) => s.activeProfile);
 
   if (!activeProfile) {
-    return <div>Select a profile to view report</div>;
+    return <div>{t('parentReport.noData')}</div>;
   }
 
   return (
     <div className="parent-report-dashboard">
       <div className="report-header">
-        <h1>Progress Report — {activeProfile.pseudo}</h1>
+        <h1>{t('parentReport.title')} — {activeProfile.pseudo}</h1>
         <span className="report-date">{new Date().toLocaleDateString()}</span>
       </div>
 
       {/* Executive Summary */}
       <section className="report-section executive-summary">
-        <h2>📊 Executive Summary</h2>
+        <h2>📊 {t('parentReport.title')}</h2>
         <ReportSummary profile={activeProfile} />
       </section>
 
       {/* Progress Trajectory */}
       <section className="report-section">
-        <h2>📈 Progress Trajectory (4 weeks)</h2>
+        <h2>📈 {t('parentReport.accuracyChart')} (4 weeks)</h2>
         <TrajectoryChart sessions={activeProfile.sessions} />
       </section>
 
       {/* Cognitive Strengths */}
       <section className="report-section">
-        <h2>🧠 Cognitive Domains Assessment</h2>
+        <h2>🧠 {t('parentReport.cognitiveAssessment')}</h2>
         <CognitiveAssessment sessions={activeProfile.sessions} />
       </section>
 
@@ -53,7 +55,7 @@ export function ParentReportDashboard() {
       </section>
 
       {/* Printable note */}
-      <p className="print-note">💻 Use your browser's Print function (Ctrl+P) to save this report as PDF</p>
+      <p className="print-note">💻 {t('parentReport.printNote')}</p>
     </div>
   );
 }
@@ -62,6 +64,7 @@ export function ParentReportDashboard() {
  * Executive summary overview
  */
 function ReportSummary({ profile }: { profile: PlayerProfile }) {
+  const { t } = useTranslation();
   const stats = useMemo(() => {
     const totalSessions = profile.sessions.length;
     const avgAccuracy =
@@ -81,36 +84,39 @@ function ReportSummary({ profile }: { profile: PlayerProfile }) {
   return (
     <div className="summary-grid">
       <div className="summary-card">
-        <span className="summary-label">Total Sessions</span>
+        <span className="summary-label">{t('parentReport.totalSessions')}</span>
         <span className="summary-value">{stats.totalSessions}</span>
         <span className="summary-subtext">
-          {stats.totalMinutes} minutes invested
+          {stats.totalMinutes} {t('parentReport.minutesInvested')}
         </span>
       </div>
       <div className="summary-card">
-        <span className="summary-label">Average Accuracy</span>
+        <span className="summary-label">{t('parentReport.averageAccuracy')}</span>
         <span className="summary-value" style={{ color: getAccuracyColor(stats.avgAccuracy) }}>
           {Math.round(stats.avgAccuracy * 100)}%
         </span>
-        <span className="summary-subtext">WCAG AAA standard: ≥75%</span>
+        <span className="summary-subtext">{t('parentReport.wcagStandard')}</span>
       </div>
       <div className="summary-card">
-        <span className="summary-label">Current Level</span>
+        <span className="summary-label">{t('parentReport.currentLevel')}</span>
         <span className="summary-value">{stats.latestLevel}/10</span>
-        <span className="summary-subtext">Adaptive difficulty</span>
+        <span className="summary-subtext">{t('parentReport.adaptiveDifficulty')}</span>
       </div>
       <div className="summary-card">
-        <span className="summary-label">Engagement</span>
+        <span className="summary-label">{t('parentReport.engagement')}</span>
         <span className="summary-value">
           {stats.totalSessions > 10 ? '✅ Excellent' : stats.totalSessions > 5 ? '🟡 Good' : '🔴 Needs boost'}
         </span>
-        <span className="summary-subtext">Last session: {getLastSessionDate(profile.sessions)}</span>
+        <span className="summary-subtext">
+          {t('parentReport.lastSession')}{getLastSessionDate(profile.sessions)}
+        </span>
       </div>
     </div>
   );
 }
 
 function TrajectoryChart({ sessions }: { sessions: SessionSummary[] }) {
+  const { t } = useTranslation();
   const trajectory = useMemo(() => {
     const last4weeks = sessions
       .sort((a, b) => new Date(a.month).getTime() - new Date(b.month).getTime())
@@ -126,7 +132,7 @@ function TrajectoryChart({ sessions }: { sessions: SessionSummary[] }) {
   return (
     <div className="trajectory-container">
       <div className="trajectory-row">
-        <div className="trajectory-label">Accuracy (%)</div>
+        <div className="trajectory-label">{t('parentReport.accuracyChart')}</div>
         <div className="trajectory-data">
           {trajectory.accuracy.map((acc, i) => (
             <div key={i} className="trajectory-item">
@@ -137,7 +143,7 @@ function TrajectoryChart({ sessions }: { sessions: SessionSummary[] }) {
                   backgroundColor: getAccuracyColor(acc / 100),
                 }}
                 role="img"
-                aria-label={`Week ${i + 1}: ${acc}% accuracy`}
+                aria-label={`${t('parentReport.accuracyChart')} Semaine ${i + 1}: ${acc}%`}
               />
               <span className="trajectory-value">{acc}%</span>
             </div>
@@ -146,7 +152,7 @@ function TrajectoryChart({ sessions }: { sessions: SessionSummary[] }) {
       </div>
 
       <div className="trajectory-row">
-        <div className="trajectory-label">Level</div>
+        <div className="trajectory-label">{t('parentReport.levelChart')}</div>
         <div className="trajectory-data">
           {trajectory.levels.map((level, i) => (
             <div key={i} className="trajectory-item">
@@ -160,6 +166,7 @@ function TrajectoryChart({ sessions }: { sessions: SessionSummary[] }) {
 }
 
 function CognitiveAssessment({ sessions }: { sessions: SessionSummary[] }) {
+  const { t } = useTranslation();
   // Map modules to domains
   const domainMap: Record<string, string> = {
     gonogo: 'Inhibition',
@@ -194,11 +201,26 @@ function CognitiveAssessment({ sessions }: { sessions: SessionSummary[] }) {
     }));
   }, [sessions]);
 
+  const translateDomain = (domainName: string) => {
+    switch (domainName) {
+      case 'Inhibition':
+        return t('parentReport.domains.inhibition');
+      case 'Working Memory':
+        return t('parentReport.domains.workingMemory');
+      case 'Attention':
+        return t('parentReport.domains.attention');
+      case 'Switching':
+        return t('parentReport.domains.switching');
+      default:
+        return domainName;
+    }
+  };
+
   return (
     <div className="cognitive-assessment">
       {assessment.map(({ name, accuracy, count }) => (
         <div key={name} className="assessment-row">
-          <span className="domain-name">{name}</span>
+          <span className="domain-name">{translateDomain(name)}</span>
           <div className="domain-bar">
             <div
               className="domain-fill"

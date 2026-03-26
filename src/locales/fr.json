@@ -8,5 +8,28 @@
     "standard": "8 à 17 ans",
     "choose": "Choisissez la version pour l'enfant"
   },
-  "disclaimer": "FocusQuest est un outil d'entraînement cognitif. Il n'est pas un dispositif médical, ne traite pas le TDAH et ne remplace aucun suivi par un professionnel de santé."
+  "disclaimer": "FocusQuest est un outil d'entraînement cognitif. Il n'est pas un dispositif médical, ne traite pas le TDAH et ne remplace aucun suivi par un professionnel de santé.",
+  "parentReport": {
+    "title": "Rapport de performance",
+    "totalSessions": "Nombre de sessions",
+    "averageAccuracy": "Précision moyenne",
+    "wcagStandard": "Norme WCAG AAA : ≥75%",
+    "currentLevel": "Niveau actuel",
+    "engagement": "Engagement",
+    "lastSession": "Dernière session : ",
+    "accuracyChart": "Précision (%)",
+    "levelChart": "Niveau",
+    "cognitiveAssessment": "Évaluation cognitive",
+    "domains": {
+      "inhibition": "Inhibition",
+      "workingMemory": "Mémoire de travail",
+      "attention": "Attention",
+      "switching": "Changement de tâche"
+    },
+    "sessions": "sessions",
+    "printNote": "Utilisez l'impression de votre navigateur (Ctrl+P) pour enregistrer ce rapport en PDF",
+    "executiveSummary": "Résumé exécutif",
+    "adaptiveDifficulty": "Difficulté adaptative",
+    "minutesInvested": "minutes investies"
+  }
 }

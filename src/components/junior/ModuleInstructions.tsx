@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import type { ModuleId } from '../../types/profile';
 
 const INSTRUCTION_TEXTS: Record<ModuleId, string> = {
@@ -23,19 +23,69 @@ export interface ModuleInstructionsProps {
 export function ModuleInstructions({ moduleId, onStart }: ModuleInstructionsProps) {
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const hasSpoken = useRef(false);
+  const [selectedVoice, setSelectedVoice] = useState<SpeechSynthesisVoice | null>(null);
+  const [supportsSpeech, setSupportsSpeech] = useState(true);
+
+  const getBestVoice = useCallback(() => {
+    if (!window.speechSynthesis) return null;
+    const voices = window.speechSynthesis.getVoices();
+    const frenchVoices = voices.filter((v) => /fr(-|_)?FR/i.test(v.lang));
+    if (frenchVoices.length > 0) {
+      // Prioritize natural quality voices if available
+      return (
+        frenchVoices.find((v) => /Google|Microsoft|Amazon|Apple/.test(v.name)) || frenchVoices[0]
+      );
+    }
+    return voices.length > 0 ? voices[0] : null;
+  }, []);
 
   const speak = useCallback(() => {
-    if (!window.speechSynthesis) return;
     const text = INSTRUCTION_TEXTS[moduleId];
     if (!text) return;
-    window.speechSynthesis.cancel();
+
+    if (!window.speechSynthesis) {
+      setSupportsSpeech(false);
+      return;
+    }
+
+    if (window.speechSynthesis.speaking) {
+      window.speechSynthesis.cancel();
+    }
+
     const u = new SpeechSynthesisUtterance(text);
     u.lang = 'fr-FR';
-    u.rate = 0.9;
+    u.rate = 0.95; // plus naturel et plus compréhensible
+    u.pitch = 1;
+    u.volume = 1;
+
+    if (selectedVoice) {
+      u.voice = selectedVoice;
+    }
+
     utteranceRef.current = u;
     window.speechSynthesis.speak(u);
     hasSpoken.current = true;
-  }, [moduleId]);
+  }, [moduleId, selectedVoice]);
+
+  useEffect(() => {
+    if (!window.speechSynthesis) {
+      setSupportsSpeech(false);
+      return;
+    }
+
+    const loadVoices = () => {
+      const best = getBestVoice();
+      if (best) setSelectedVoice(best);
+    };
+
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+
+    return () => {
+      window.speechSynthesis.onvoiceschanged = null;
+      window.speechSynthesis.cancel();
+    };
+  }, [getBestVoice]);
 
   useEffect(() => {
     speak();
@@ -53,6 +103,11 @@ export function ModuleInstructions({ moduleId, onStart }: ModuleInstructionsProp
 
   return (
     <div className="junior-instructions" style={styles.container}>
+      {!supportsSpeech && (
+        <div style={{ ...styles.warning, backgroundColor: '#ffebee', color: '#b71c1c' }}>
+          Synthèse vocale non supportée : le texte est affiché en lecture. Si possible, utilisez un navigateur moderne.
+        </div>
+      )}
       <div style={styles.visual}>
         {moduleId === 'gonogo' && (
           <div style={styles.gonogoVisual}>

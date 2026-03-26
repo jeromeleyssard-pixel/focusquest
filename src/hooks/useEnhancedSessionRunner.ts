@@ -56,7 +56,12 @@ export function useEnhancedSessionRunner() {
         );
 
         const correctTrials = trials.filter((t) => t.correct).length;
-        const accuracy = trials.length > 0 ? correctTrials / trials.length : 0;
+        let accuracy = trials.length > 0 ? correctTrials / trials.length : 0;
+        // Older data may have been stored as percentage (0-100), normalize to 0-1
+        if (accuracy > 1) {
+          accuracy = accuracy / 100;
+        }
+
         const meanRT =
           trials.length > 0
             ? trials.reduce((sum, t) => sum + t.reactionTimeMs, 0) /

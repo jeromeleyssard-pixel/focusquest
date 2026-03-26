@@ -1,12 +1,25 @@
 import type { PlayerProfile } from '../types/profile';
+import { runMigrations } from './dataMigration';
 
 const PROFILES_KEY = 'focusquest_profiles';
+const MIGRATION_VERSION_KEY = 'focusquest_migration_v';
+const CURRENT_MIGRATION_VERSION = 1;
 const MAX_PROFILES = 3;
 
 export function loadProfiles(): PlayerProfile[] {
   try {
     const raw = localStorage.getItem(PROFILES_KEY);
-    return raw ? JSON.parse(raw) : [];
+    let profiles = raw ? JSON.parse(raw) : [];
+    
+    // Run migrations if needed
+    const migratedVersion = parseInt(localStorage.getItem(MIGRATION_VERSION_KEY) || '0', 10);
+    if (migratedVersion < CURRENT_MIGRATION_VERSION) {
+      profiles = runMigrations(profiles);
+      localStorage.setItem(MIGRATION_VERSION_KEY, CURRENT_MIGRATION_VERSION.toString());
+      localStorage.setItem(PROFILES_KEY, JSON.stringify(profiles));
+    }
+    
+    return profiles;
   } catch {
     return [];
   }
