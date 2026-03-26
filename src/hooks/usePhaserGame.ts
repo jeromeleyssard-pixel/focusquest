@@ -6,7 +6,7 @@ export interface PhaserGameConfig {
   sceneKey: string;
   width?: number;
   height?: number;
-  config?: any;
+  config?: Phaser.Types.Core.GameConfig;
 }
 
 export function usePhaserGame(
@@ -86,9 +86,6 @@ export async function runPhaserScene<T>(
       return;
     }
 
-    let gameInstance: Phaser.Game | null = null;
-    let completed = false;
-
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
       width: 1024,
@@ -108,7 +105,7 @@ export async function runPhaserScene<T>(
       },
     };
 
-    gameInstance = new Phaser.Game(config);
+    new Phaser.Game(config);
 
     // For now, resolve immediately - scenes handle their own completion
     // In a full implementation, scenes would emit events to resolve the promise

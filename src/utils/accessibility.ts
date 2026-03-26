@@ -37,7 +37,7 @@ const DEFAULT_SETTINGS: AccessibilitySettings = {
   colorblindMode: 'none',
 };
 
-export const useAccessibilityStore = create<AccessibilityStore>((set, get) => ({
+export const useAccessibilityStore = create<AccessibilityStore>((set) => ({
   ...DEFAULT_SETTINGS,
 
   setHighContrast: (value: boolean) => set({ highContrast: value }),
@@ -172,7 +172,7 @@ export function playAccessibleSound(
 
   try {
     const audioContext =
-      new (window.AudioContext || (window as any).webkitAudioContext)();
+      new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
 

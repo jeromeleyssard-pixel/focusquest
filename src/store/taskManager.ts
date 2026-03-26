@@ -46,7 +46,7 @@ interface TaskManager {
   // States
   sessionStatus: TaskStatus;
   blockStatus: TaskStatus;
-  isBreakActive: Boolean;
+  isBreakActive: boolean;
 
   // Actions
   initSession: (moduleId: ModuleId, version: 'junior' | 'standard') => void;
