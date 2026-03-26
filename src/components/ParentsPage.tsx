@@ -43,6 +43,8 @@ export function ParentsPage() {
       </section>
 
       <p style={styles.back}>
+        <Link to="/references">Accéder aux références scientifiques</Link>
+        {' '}|{' '}
         <Link to="/">Retour à l&apos;accueil</Link>
       </p>
     </div>
