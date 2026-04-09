@@ -83,6 +83,24 @@ body {
   }
 }
 
+/* ── Desktop: centrer la zone de jeu portrait dans la fenêtre ── */
+@media (min-width: 601px) {
+  .session-layout {
+    align-items: center;
+  }
+
+  .session-layout .jspsych-container {
+    max-width: 500px;
+    border-radius: 20px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.45);
+  }
+
+  /* jsPsych inner wrapper */
+  .session-layout .jspsych-container > div {
+    max-width: 500px;
+  }
+}
+
 .dyslexic {
   --font-main: 'OpenDyslexic', system-ui, sans-serif;
 }
