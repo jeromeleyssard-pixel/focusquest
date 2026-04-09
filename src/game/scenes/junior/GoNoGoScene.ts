@@ -129,7 +129,7 @@ export class GoNoGoScene extends Phaser.Scene {
       ? this.add.image(this.scale.width / 2, this.scale.height / 2, 'frog-green')
       : this.add.image(this.scale.width / 2, this.scale.height / 2, 'toad-red');
 
-    stimulus.setDisplaySize(100, 100).setAlpha(0);
+    stimulus.setDisplaySize(148, 148).setAlpha(0);
 
     // Fade in animation
     this.tweens.add({

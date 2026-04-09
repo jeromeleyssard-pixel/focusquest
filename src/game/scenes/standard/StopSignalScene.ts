@@ -3,7 +3,7 @@ import { BaseTrialScene } from '../BaseTrialScene';
 import type { StopSignalTrialSpec } from '../../trialControllers/types';
 import type { AnyTrialResult } from '../../trialControllers/types';
 import { StopSignalController } from '../../trialControllers/stopSignalController';
-import type { StopSignalResponse, StopSignalTrialResult } from '../../trialControllers/types';
+import type { StopSignalResponse } from '../../trialControllers/types';
 import { playCorrectSound, playNeutralSound } from '../../../utils/juniorFeedback';
 
 const BASE_ASSET = (import.meta.env?.BASE_URL || '/') as string;
@@ -229,7 +229,7 @@ export class StopSignalScene extends BaseTrialScene<StopSignalTrialSpec> {
     return null;
   }
 
-  getNoResponse(_spec: StopSignalTrialSpec) {
+  getNoResponse(_: StopSignalTrialSpec) {
     return null as StopSignalResponse;
   }
 

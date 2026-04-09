@@ -6,6 +6,7 @@ import './styles/globals.css';
 import './styles/tokens.css';
 import './styles/shell.css';
 import './styles/junior-paradigms.css';
+import './styles/standard-paradigms.css';
 import App from './App';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

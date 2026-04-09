@@ -1,19 +1,137 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="400" height="600">
   <defs>
-    <linearGradient id="forest-sky" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#87CEEB"/>
-      <stop offset="60%" style="stop-color:#98D8A0"/>
-      <stop offset="100%" style="stop-color:#228B22"/>
+    <linearGradient id="fs-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#FFF176"/>
+      <stop offset="30%"  stop-color="#FFD54F"/>
+      <stop offset="70%"  stop-color="#81D4FA"/>
+      <stop offset="100%" stop-color="#B3E5FC"/>
     </linearGradient>
-    <linearGradient id="tree-dark" x1="0%" y1="100%" x2="0%" y2="0%">
-      <stop offset="0%" style="stop-color:#2d5a27"/>
-      <stop offset="100%" style="stop-color:#3d7a37"/>
+    <linearGradient id="fs-ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#558B2F"/>
+      <stop offset="100%" stop-color="#33691E"/>
     </linearGradient>
+    <linearGradient id="fs-tree-dark" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#2E7D32"/>
+      <stop offset="100%" stop-color="#1B5E20"/>
+    </linearGradient>
+    <linearGradient id="fs-tree-mid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#388E3C"/>
+      <stop offset="100%" stop-color="#2E7D32"/>
+    </linearGradient>
+    <radialGradient id="fs-sun" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#FFEE58"/>
+      <stop offset="70%"  stop-color="#FFD600"/>
+      <stop offset="100%" stop-color="#FFD60000"/>
+    </radialGradient>
   </defs>
-  <rect width="400" height="300" fill="url(#forest-sky)"/>
-  <ellipse cx="80" cy="220" rx="50" ry="90" fill="url(#tree-dark)"/>
-  <ellipse cx="200" cy="240" rx="70" ry="80" fill="url(#tree-dark)"/>
-  <ellipse cx="320" cy="210" rx="55" ry="95" fill="url(#tree-dark)"/>
-  <ellipse cx="350" cy="260" rx="40" ry="50" fill="#1b4d1b"/>
-  <ellipse cx="50" cy="270" rx="45" ry="45" fill="#2e7d32"/>
+
+  <!-- Sky -->
+  <rect width="400" height="600" fill="url(#fs-sky)"/>
+
+  <!-- Sun -->
+  <circle cx="72" cy="72" r="50" fill="url(#fs-sun)" opacity="0.9"/>
+  <circle cx="72" cy="72" r="26" fill="#FFEE58"/>
+
+  <!-- Sun rays -->
+  <line x1="72" y1="16" x2="72" y2="4"   stroke="#FFD600" stroke-width="3" opacity="0.6" stroke-linecap="round"/>
+  <line x1="106" y1="38" x2="116" y2="30" stroke="#FFD600" stroke-width="3" opacity="0.6" stroke-linecap="round"/>
+  <line x1="122" y1="72" x2="134" y2="72" stroke="#FFD600" stroke-width="3" opacity="0.6" stroke-linecap="round"/>
+  <line x1="38" y1="38"  x2="28"  y2="30" stroke="#FFD600" stroke-width="3" opacity="0.6" stroke-linecap="round"/>
+  <line x1="22" y1="72"  x2="10"  y2="72" stroke="#FFD600" stroke-width="3" opacity="0.6" stroke-linecap="round"/>
+
+  <!-- Sunbeams through trees -->
+  <polygon points="80,100 120,400 60,400"  fill="#FFF9C4" opacity="0.07"/>
+  <polygon points="130,80 180,400 110,400" fill="#FFF9C4" opacity="0.05"/>
+  <polygon points="40,120 70,400 10,400"   fill="#FFF9C4" opacity="0.06"/>
+
+  <!-- Cloud left -->
+  <ellipse cx="240" cy="70"  rx="55" ry="22" fill="#fff" opacity="0.82"/>
+  <ellipse cx="210" cy="78"  rx="36" ry="18" fill="#fff" opacity="0.82"/>
+  <ellipse cx="268" cy="78"  rx="38" ry="18" fill="#fff" opacity="0.82"/>
+  <!-- Cloud right -->
+  <ellipse cx="340" cy="110" rx="40" ry="16" fill="#fff" opacity="0.70"/>
+  <ellipse cx="316" cy="118" rx="26" ry="14" fill="#fff" opacity="0.70"/>
+  <ellipse cx="362" cy="118" rx="26" ry="13" fill="#fff" opacity="0.70"/>
+
+  <!-- Far tree silhouettes (dark) -->
+  <ellipse cx="0"   cy="310" rx="50" ry="130" fill="url(#fs-tree-dark)" opacity="0.90"/>
+  <ellipse cx="50"  cy="290" rx="45" ry="140" fill="url(#fs-tree-dark)" opacity="0.85"/>
+  <ellipse cx="110" cy="310" rx="42" ry="125" fill="url(#fs-tree-dark)" opacity="0.88"/>
+  <ellipse cx="400" cy="308" rx="50" ry="132" fill="url(#fs-tree-dark)" opacity="0.90"/>
+  <ellipse cx="350" cy="292" rx="44" ry="138" fill="url(#fs-tree-dark)" opacity="0.85"/>
+  <ellipse cx="298" cy="314" rx="40" ry="122" fill="url(#fs-tree-dark)" opacity="0.88"/>
+
+  <!-- Mid trees (lighter) -->
+  <ellipse cx="20"  cy="360" rx="38" ry="100" fill="url(#fs-tree-mid)"/>
+  <ellipse cx="80"  cy="340" rx="44" ry="120" fill="url(#fs-tree-mid)"/>
+  <ellipse cx="148" cy="355" rx="36" ry="108" fill="url(#fs-tree-mid)"/>
+  <ellipse cx="380" cy="358" rx="38" ry="102" fill="url(#fs-tree-mid)"/>
+  <ellipse cx="322" cy="342" rx="44" ry="118" fill="url(#fs-tree-mid)"/>
+  <ellipse cx="258" cy="358" rx="36" ry="106" fill="url(#fs-tree-mid)"/>
+
+  <!-- Tree trunks -->
+  <rect x="74"  y="420" width="14" height="80" rx="4" fill="#5D4037"/>
+  <rect x="140" y="415" width="14" height="85" rx="4" fill="#5D4037"/>
+  <rect x="312" y="418" width="14" height="82" rx="4" fill="#5D4037"/>
+  <rect x="374" y="420" width="12" height="80" rx="4" fill="#5D4037"/>
+
+  <!-- Ground -->
+  <ellipse cx="200" cy="500" rx="260" ry="80" fill="url(#fs-ground)"/>
+  <rect x="0" y="490" width="400" height="110" fill="#33691E"/>
+
+  <!-- Forest path (centre) -->
+  <ellipse cx="200" cy="510" rx="50" ry="20"  fill="#8D6E63" opacity="0.80"/>
+  <ellipse cx="200" cy="540" rx="64" ry="26"  fill="#795548" opacity="0.75"/>
+  <ellipse cx="200" cy="575" rx="80" ry="35"  fill="#6D4C41" opacity="0.70"/>
+
+  <!-- Grass tufts -->
+  <path d="M155 490 Q150 472 146 482" stroke="#7CB342" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M155 490 Q155 470 160 480" stroke="#7CB342" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M155 490 Q160 472 166 482" stroke="#7CB342" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M245 488 Q240 470 236 480" stroke="#7CB342" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M245 488 Q245 468 250 478" stroke="#7CB342" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M245 488 Q250 470 256 480" stroke="#7CB342" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+  <!-- Mushrooms left -->
+  <rect x="34"  y="490" width="8"  height="18" rx="2" fill="#BCAAA4"/>
+  <ellipse cx="38" cy="490" rx="14" ry="9" fill="#E53935"/>
+  <circle cx="35" cy="488" r="2"  fill="#fff" opacity="0.8"/>
+  <circle cx="40" cy="486" r="2"  fill="#fff" opacity="0.8"/>
+  <circle cx="44" cy="490" r="1.5" fill="#fff" opacity="0.8"/>
+
+  <!-- Mushrooms right -->
+  <rect x="356" y="488" width="8"  height="18" rx="2" fill="#BCAAA4"/>
+  <ellipse cx="360" cy="488" rx="14" ry="9" fill="#E53935"/>
+  <circle cx="356" cy="486" r="2"  fill="#fff" opacity="0.8"/>
+  <circle cx="362" cy="484" r="2"  fill="#fff" opacity="0.8"/>
+  <circle cx="368" cy="488" r="1.5" fill="#fff" opacity="0.8"/>
+
+  <!-- Flowers left -->
+  <circle cx="110" cy="500" r="5" fill="#FFEB3B"/>
+  <circle cx="104" cy="497" r="3" fill="#FF80AB"/>
+  <circle cx="116" cy="497" r="3" fill="#FF80AB"/>
+  <circle cx="110" cy="494" r="3" fill="#FF80AB"/>
+  <circle cx="110" cy="506" r="3" fill="#FF80AB"/>
+  <!-- Flowers right -->
+  <circle cx="290" cy="498" r="5" fill="#FFEB3B"/>
+  <circle cx="284" cy="495" r="3" fill="#CE93D8"/>
+  <circle cx="296" cy="495" r="3" fill="#CE93D8"/>
+  <circle cx="290" cy="492" r="3" fill="#CE93D8"/>
+  <circle cx="290" cy="504" r="3" fill="#CE93D8"/>
+
+  <!-- Fireflies / sparkles -->
+  <circle cx="170" cy="360" r="2.5" fill="#FFEE58" opacity="0.75"/>
+  <circle cx="230" cy="330" r="2"   fill="#FFEE58" opacity="0.65"/>
+  <circle cx="130" cy="400" r="2"   fill="#FFEE58" opacity="0.60"/>
+  <circle cx="270" cy="370" r="2.5" fill="#FFEE58" opacity="0.70"/>
+  <circle cx="320" cy="410" r="2"   fill="#FFEE58" opacity="0.55"/>
+
+  <!-- Butterfly left -->
+  <ellipse cx="170" cy="440" rx="10" ry="6" fill="#FF8A65" opacity="0.85" transform="rotate(-20 170 440)"/>
+  <ellipse cx="154" cy="442" rx="8"  ry="5" fill="#FFAB40" opacity="0.75" transform="rotate(20 154 442)"/>
+  <line x1="162" y1="440" x2="158" y2="436" stroke="#5D4037" stroke-width="1.5"/>
+  <!-- Butterfly right -->
+  <ellipse cx="248" cy="430" rx="10" ry="6" fill="#CE93D8" opacity="0.85" transform="rotate(20 248 430)"/>
+  <ellipse cx="264" cy="432" rx="8"  ry="5" fill="#BA68C8" opacity="0.75" transform="rotate(-20 264 432)"/>
+  <line x1="256" y1="430" x2="260" y2="426" stroke="#5D4037" stroke-width="1.5"/>
 </svg>

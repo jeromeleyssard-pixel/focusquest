@@ -1,1 +1,39 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80"><ellipse cx="40" cy="50" rx="26" ry="22" fill="#81C784"/><circle cx="35" cy="42" r="4" fill="#333"/><circle cx="45" cy="42" r="4" fill="#333"/><path d="M30 58 Q40 48 50 58" fill="none" stroke="#2e7d32" stroke-width="2"/><path d="M40 28 L40 18 M32 24 L28 14 M48 24 L52 14" stroke="#2e7d32" stroke-width="2" fill="none"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <!-- Shadow -->
+  <ellipse cx="60" cy="116" rx="34" ry="5" fill="rgba(0,0,0,0.15)"/>
+  <!-- Body -->
+  <ellipse cx="60" cy="92" rx="34" ry="26" fill="#4CAF50"/>
+  <!-- Belly -->
+  <ellipse cx="60" cy="97" rx="20" ry="17" fill="#A5D6A7"/>
+  <!-- Neck -->
+  <rect x="49" y="66" width="22" height="28" rx="8" fill="#4CAF50"/>
+  <!-- Head -->
+  <ellipse cx="60" cy="52" rx="28" ry="26" fill="#4CAF50"/>
+  <!-- Head shading -->
+  <ellipse cx="60" cy="40" rx="20" ry="10" fill="#388E3C" opacity="0.25"/>
+  <!-- Spikes on head -->
+  <polygon points="36,42 40,26 44,42" fill="#2E7D32"/>
+  <polygon points="48,36 52,18 56,36" fill="#2E7D32"/>
+  <polygon points="64,36 68,18 72,36" fill="#2E7D32"/>
+  <polygon points="76,42 80,26 84,42" fill="#2E7D32"/>
+  <!-- Snout -->
+  <ellipse cx="60" cy="62" rx="15" ry="10" fill="#66BB6A"/>
+  <!-- Eyes -->
+  <circle cx="46" cy="47" r="9"  fill="#fff"/>
+  <circle cx="74" cy="47" r="9"  fill="#fff"/>
+  <circle cx="47" cy="48" r="6"  fill="#222"/>
+  <circle cx="75" cy="48" r="6"  fill="#222"/>
+  <circle cx="49" cy="46" r="2.5" fill="#fff" opacity="0.9"/>
+  <circle cx="77" cy="46" r="2.5" fill="#fff" opacity="0.9"/>
+  <!-- Nostrils -->
+  <circle cx="55" cy="62" r="2.5" fill="#2E7D32"/>
+  <circle cx="65" cy="62" r="2.5" fill="#2E7D32"/>
+  <!-- Smile -->
+  <path d="M46 68 Q60 78 74 68" fill="none" stroke="#2E7D32" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Arms -->
+  <ellipse cx="24" cy="88" rx="11" ry="7"  fill="#4CAF50" transform="rotate(-26 24 88)"/>
+  <ellipse cx="96" cy="88" rx="11" ry="7"  fill="#4CAF50" transform="rotate(26 96 88)"/>
+  <!-- Feet -->
+  <ellipse cx="44" cy="112" rx="14" ry="7" fill="#388E3C"/>
+  <ellipse cx="76" cy="112" rx="14" ry="7" fill="#388E3C"/>
+</svg>

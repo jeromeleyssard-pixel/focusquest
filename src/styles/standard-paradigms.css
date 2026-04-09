@@ -1,0 +1,227 @@
+/* ============================================================
+   FocusQuest — Standard Paradigms CSS
+   Shared styles for CPT-AX, N-Back, Stop-Signal, Task-Switch
+   ============================================================ */
+
+/* ── Common scene wrapper ── */
+.fq-std-scene {
+  min-height: 58vh;
+  border-radius: 16px;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 12px 12px;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle vignette to improve text readability over backgrounds */
+.fq-std-scene::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.35) 100%);
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* ── Large central letter (CPT, N-Back) ── */
+.fq-std-letter {
+  font-size: min(22vw, 88px);
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.90), 0 0 40px rgba(99, 102, 241, 0.55);
+  letter-spacing: 0.04em;
+  line-height: 1;
+  z-index: 1;
+  animation: fq-letter-pop 220ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes fq-letter-pop {
+  from { opacity: 0; transform: scale(0.55); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── GO arrow (Stop-Signal) ── */
+.fq-std-arrow {
+  font-size: min(22vw, 88px);
+  color: #ffffff;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.85);
+  line-height: 1;
+  z-index: 1;
+  animation: fq-arrow-slide 180ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes fq-arrow-slide {
+  from { opacity: 0; transform: translateX(var(--slide-dir, -24px)) scale(0.8); }
+  to   { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+/* ── STOP badge (Stop-Signal) ── */
+.fq-stop-badge {
+  padding: 14px 32px;
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  color: #fff;
+  border-radius: 16px;
+  font-weight: 900;
+  font-size: min(9vw, 38px);
+  letter-spacing: 0.1em;
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.40), 0 6px 20px rgba(0, 0, 0, 0.50);
+  z-index: 1;
+  animation: fq-stop-pop 200ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes fq-stop-pop {
+  from { opacity: 0; transform: scale(0.4); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── Task-Switch rule pill ── */
+.fq-ts-rule-pill {
+  align-self: center;
+  background: rgba(17, 24, 39, 0.80);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  padding: 8px 18px;
+  border-radius: 24px;
+  font-weight: 700;
+  font-size: min(4vw, 17px);
+  letter-spacing: 0.05em;
+  border: 1px solid rgba(255,255,255,0.18);
+  z-index: 1;
+}
+
+/* ── Task-Switch central number ── */
+.fq-ts-number {
+  font-size: min(20vw, 80px);
+  color: #ffffff;
+  font-weight: 900;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.85);
+  line-height: 1;
+  z-index: 1;
+  animation: fq-letter-pop 220ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* ── Task-Switch side rule labels ── */
+.fq-ts-side {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  z-index: 1;
+}
+
+.fq-ts-left-label {
+  color: #fde68a;
+  font-weight: 700;
+  font-size: min(4.5vw, 18px);
+  text-shadow: 0 1px 6px rgba(0,0,0,0.7);
+}
+
+.fq-ts-right-label {
+  color: #bfdbfe;
+  font-weight: 700;
+  font-size: min(4.5vw, 18px);
+  text-shadow: 0 1px 6px rgba(0,0,0,0.7);
+}
+
+/* ── Tap zone ── */
+.fq-tap-zone {
+  margin-top: 14px;
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+  z-index: 1;
+}
+
+/* ── Tap buttons ── */
+.fq-tap-btn {
+  padding: 14px 28px;
+  font-size: 19px;
+  font-weight: 700;
+  background: var(--fq-primary, #2563eb);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  min-height: 52px;
+  touch-action: manipulation;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.45), 0 2px 0 rgba(0,0,0,0.25) inset;
+  transition: background-color 100ms ease, transform 80ms ease, box-shadow 100ms ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.fq-tap-btn:active {
+  background: #1e40af;
+  transform: scale(0.96) translateY(1px);
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.30);
+}
+
+/* ── Junior 1-Back animal ── */
+.oneback-stim {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.oneback-stim img {
+  width: min(38vw, 148px);
+  height: min(38vw, 148px);
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.45));
+  animation: fq-animal-pop 260ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes fq-animal-pop {
+  from { opacity: 0; transform: scale(0.5) rotate(-8deg); }
+  to   { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+/* ── Junior DCCS card ── */
+.dccs-card {
+  width: min(28vw, 120px);
+  height: min(28vw, 120px);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: min(14vw, 60px);
+  color: #fff;
+  margin: 0 auto;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.30), 0 0 0 4px rgba(255,255,255,0.25);
+  animation: fq-card-deal 280ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes fq-card-deal {
+  from { opacity: 0; transform: scale(0.6) translateY(-20px) rotate(-12deg); }
+  to   { opacity: 1; transform: scale(1) translateY(0) rotate(0deg); }
+}
+
+.dccs-panel {
+  margin-bottom: 12px;
+  padding: 10px 20px;
+  background: var(--fq-primary, #2563eb);
+  color: #fff;
+  border-radius: 12px;
+  font-size: min(4.5vw, 18px);
+  font-weight: 700;
+  text-align: center;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+}
+
+/* ── Reduced motion overrides ── */
+@media (prefers-reduced-motion: reduce) {
+  .fq-std-letter,
+  .fq-std-arrow,
+  .fq-stop-badge,
+  .fq-ts-number,
+  .oneback-stim img,
+  .dccs-card {
+    animation: none;
+  }
+}

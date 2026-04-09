@@ -78,9 +78,9 @@ export function buildDCCSTimeline(
 
     const panelLabel = currentRule === 'color' ? 'Trie par COULEUR' : 'Trie par FORME';
     const cardHtml = `
-      <div class="dccs-panel" style="margin-bottom:12px;padding:10px 16px;background:var(--fq-primary);color:#fff;border-radius:8px;font-size:min(4.5vw,18px);font-weight:bold;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.2);">${panelLabel}</div>
+      <div class="dccs-panel">${panelLabel}</div>
       <p style="margin:8px 0;font-size:min(4vw,16px);color:var(--fq-text);text-align:center;">Où va cette carte ?</p>
-      <div class="dccs-card" style="width:min(24vw,110px);height:min(24vw,110px);background:${COLOR_MAP[color]};border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:min(12vw,52px);color:#fff;margin:0 auto;box-shadow:0 4px 12px rgba(0,0,0,0.2);">${SHAPE_CHAR[shape]}</div>
+      <div class="dccs-card" style="background:${COLOR_MAP[color]};">${SHAPE_CHAR[shape]}</div>
     `;
 
     timeline.push({

@@ -21,7 +21,7 @@ const NOGO_IMG = `${BASE}assets/images/junior/toad-red.svg`;
 const POND_BG = `${BASE}assets/images/junior/pond-bg.svg`;
 
 function wrapMare(stim: string): string {
-  return `<div class="gonogo-mare fq-stimulus-box fq-junior-paradigm" style="background-image:url(${POND_BG});background-size:cover;background-position:center;min-height:55vh;display:flex;align-items:center;justify-content:center;border-radius:12px;">${stim}</div>`;
+  return `<div class="gonogo-mare fq-junior-paradigm" style="background-image:url(${POND_BG});background-size:cover;background-position:center 40%;min-height:58vh;width:100%;display:flex;align-items:center;justify-content:center;border-radius:20px;">${stim}</div>`;
 }
 
 export function buildGoNoGoTimeline(
@@ -34,11 +34,11 @@ export function buildGoNoGoTimeline(
   const goStimulus =
     config.goStimulus.indexOf('<img') !== -1
       ? config.goStimulus
-      : `<div class="stim-go stim-mare"><img src="${GO_IMG}" alt="Grenouille" style="width:min(22vw,100px);height:min(22vw,100px);" /></div>`;
+      : `<div class="stim-go"><img src="${GO_IMG}" alt="Grenouille" /></div>`;
   const nogoStimulus =
     config.nogoStimulus.indexOf('<img') !== -1
       ? config.nogoStimulus
-      : `<div class="stim-nogo stim-mare"><img src="${NOGO_IMG}" alt="Crapaud" style="width:min(22vw,100px);height:min(22vw,100px);" /></div>`;
+      : `<div class="stim-nogo"><img src="${NOGO_IMG}" alt="Crapaud" /></div>`;
   const goStimulusWrapped = wrapMare(goStimulus);
   const nogoStimulusWrapped = wrapMare(nogoStimulus);
 
@@ -101,6 +101,6 @@ export const GONOGO_JUNIOR_CONFIG: GoNoGoConfig = {
   responseWindow: 3000,
   isi: 1500,
   totalTrials: 60,
-  goStimulus: '<div class="stim-go" style="font-size:48px;color:#2e7d32">●</div>',
-  nogoStimulus: '<div class="stim-nogo" style="font-size:48px;color:#c62828">●</div>',
+  goStimulus: `<div class="stim-go"><img src="${GO_IMG}" alt="Grenouille" /></div>`,
+  nogoStimulus: `<div class="stim-nogo"><img src="${NOGO_IMG}" alt="Crapaud" /></div>`,
 };
