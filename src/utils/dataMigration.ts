@@ -1,22 +1,17 @@
 /**
- * Data migration utilities to fix corrupted session data
+ * Data migration utilities to fix / enrich stored session data.
  */
 import type { PlayerProfile } from '../types/profile';
 
 /**
- * Fix accuracy values that were stored with wrong scale (multiplied by 100)
- * E.g., 12.5 (wrong) → 0.125 (correct)
+ * Migration 1 — Fix accuracy stored as 0-100 instead of 0-1.
  */
 export function migrateAccuracyValues(profiles: PlayerProfile[]): PlayerProfile[] {
   return profiles.map((profile) => ({
     ...profile,
     sessions: profile.sessions.map((session) => {
-      // If accuracy > 1, it was pre-multiplied by 100
       if (session.accuracy > 1) {
-        return {
-          ...session,
-          accuracy: session.accuracy / 100,
-        };
+        return { ...session, accuracy: session.accuracy / 100 };
       }
       return session;
     }),
@@ -24,13 +19,29 @@ export function migrateAccuracyValues(profiles: PlayerProfile[]): PlayerProfile[
 }
 
 /**
- * Run all necessary migrations on profiles
+ * Migration 2 — Add missing fields introduced in v2:
+ *   date   → falls back to "YYYY-MM-01" derived from existing month
+ *   meanRT → defaults to 0
+ *   rtisv  → defaults to 0
+ */
+export function migrateAddSessionFields(profiles: PlayerProfile[]): PlayerProfile[] {
+  return profiles.map((profile) => ({
+    ...profile,
+    sessions: profile.sessions.map((session) => ({
+      date: session.date ?? `${session.month}-01`,
+      meanRT: session.meanRT ?? 0,
+      rtisv: session.rtisv ?? 0,
+      ...session,
+    })),
+  }));
+}
+
+/**
+ * Run all migrations in order.
  */
 export function runMigrations(profiles: PlayerProfile[]): PlayerProfile[] {
   let migrated = profiles;
-  
-  // Migration 1: Fix accuracy scale
-  migrated = migrateAccuracyValues(migrated);
-  
+  migrated = migrateAccuracyValues(migrated);   // v1
+  migrated = migrateAddSessionFields(migrated); // v2
   return migrated;
 }

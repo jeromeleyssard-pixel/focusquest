@@ -1,11 +1,18 @@
 /**
- * RTISV = Reaction Time Intra-Subject Variability (écart-type des TR).
+ * Mean reaction time (ms).
+ */
+export function computeMeanRT(reactionTimes: number[]): number {
+  if (reactionTimes.length === 0) return 0;
+  return reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length;
+}
+
+/**
+ * RTISV = Reaction Time Intra-Subject Variability (SD des TR).
  * Mesure sensible au TDAH selon la littérature.
  */
 export function computeRTISV(reactionTimes: number[]): number {
   if (reactionTimes.length < 2) return 0;
-  const mean =
-    reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length;
+  const mean = computeMeanRT(reactionTimes);
   const variance =
     reactionTimes.reduce((s, rt) => s + (rt - mean) ** 2, 0) /
     reactionTimes.length;

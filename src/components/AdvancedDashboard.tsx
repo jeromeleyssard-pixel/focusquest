@@ -143,9 +143,9 @@ function ModuleCard({
   level: number;
   sessionData: SessionSummary[];
 }) {
-  const recentAccuracy = sessionData.length > 0
-    ? sessionData[sessionData.length - 1].accuracy * 100
-    : 0;
+  const lastAcc = sessionData.length > 0 ? sessionData[sessionData.length - 1].accuracy : 0;
+  // accuracy is stored as 0-1 fraction
+  const recentAccuracy = lastAcc <= 1 ? lastAcc * 100 : lastAcc;
 
   const moduleLabels: Record<ModuleId, string> = {
     gonogo: 'Go/NoGo',
@@ -264,7 +264,8 @@ function WeeklyObservance({ sessions }: { sessions: SessionSummary[] }) {
     const today = new Date();
 
     sessions.forEach((session) => {
-      const sessionDate = new Date(session.month);
+      const dateStr = session.date ?? session.month;
+      const sessionDate = new Date(dateStr + (dateStr.length === 7 ? '-01' : '') + 'T00:00:00');
       const daysDiff = Math.floor((today.getTime() - sessionDate.getTime()) / (1000 * 60 * 60 * 24));
       if (daysDiff < 7 && daysDiff >= 0) {
         weekCounts[6 - daysDiff]++;

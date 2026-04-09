@@ -10,7 +10,8 @@ import { buildDCCSTimeline } from '../paradigms/junior/dccs';
 import { buildNBackTimeline } from '../paradigms/standard/nback';
 import { buildStopSignalTimeline } from '../paradigms/standard/stopsignal';
 import { buildTaskSwitchTimeline } from '../paradigms/standard/taskswitch';
-import { computeRTISV } from '../engine/metrics';
+import { computeRTISV, computeMeanRT } from '../engine/metrics';
+import { checkBadgeUnlocks } from '../utils/badges';
 import { ModuleInstructions } from './junior/ModuleInstructions';
 import { SnailTimer } from './junior/SnailTimer';
 import { runPhaserScene } from '../hooks/usePhaserGame';
@@ -84,6 +85,18 @@ export function SessionWrapper() {
   const activeProfile = useProfileStore((s) => s.activeProfile);
   const updateLevel = useProfileStore((s) => s.updateLevel);
   const addSession = useProfileStore((s) => s.addSession);
+  const unlockBadge = useProfileStore((s) => s.unlockBadge);
+
+  /** Call after addSession — reads freshest profile from store and unlocks earned badges. */
+  const awardBadges = useCallback(
+    (moduleId: ModuleId, level: number) => {
+      const profile = useProfileStore.getState().activeProfile;
+      if (!profile) return;
+      const earned = checkBadgeUnlocks(profile, { moduleId, level });
+      earned.forEach((b) => unlockBadge(b));
+    },
+    [unlockBadge]
+  );
   const getJuniorSessionUsedSeconds = useProfileStore((s) => s.getJuniorSessionUsedSeconds);
   const addJuniorSessionUsedSeconds = useProfileStore((s) => s.addJuniorSessionUsedSeconds);
   const resetJuniorSessionUsed = useProfileStore((s) => s.resetJuniorSessionUsed);
@@ -156,27 +169,35 @@ export function SessionWrapper() {
   const saveSegment = useCallback(
     (jsPsych: ReturnType<typeof initJsPsych>, level: number, segmentEndSeconds: number) => {
       const data = jsPsych.data.get();
-      const values = (data.values() as { correct?: boolean; difficultyLevel?: number }[]) ?? [];
+      const values = (data.values() as { correct?: boolean; rt?: number; difficultyLevel?: number }[]) ?? [];
       const withLevel = values.filter((t) => t.difficultyLevel != null);
       const currentLevel =
         withLevel.length > 0
           ? (withLevel[withLevel.length - 1]?.difficultyLevel ?? level)
           : level;
-      const correctCount = values.filter((t) => t.correct).length;
-      const accuracy = values.length > 0 ? Math.round((correctCount / values.length) * 100) : 0;
+      const correctTrials = values.filter((t) => t.correct);
+      const accuracy = values.length > 0 ? correctTrials.length / values.length : 0;
+      const correctRTs = correctTrials.map((t) => t.rt).filter((r): r is number => typeof r === 'number');
+      const meanRT = computeMeanRT(correctRTs);
+      const rtisv = computeRTISV(correctRTs);
       const segmentDuration = segmentEndSeconds - lastSegmentSavedAtRef.current;
       if (segmentDuration <= 0) return;
       lastSegmentSavedAtRef.current = segmentEndSeconds;
+      const now = new Date();
       updateLevel(validId, currentLevel);
       addSession({
-        month: new Date().toISOString().slice(0, 7),
+        date: now.toISOString().slice(0, 10),
+        month: now.toISOString().slice(0, 7),
         moduleId: validId,
         level: currentLevel,
         accuracy,
         durationSeconds: segmentDuration,
+        meanRT,
+        rtisv,
       });
+      awardBadges(validId, currentLevel);
     },
-    [validId, updateLevel, addSession]
+    [validId, updateLevel, addSession, awardBadges]
   );
 
   const saveAndShowPause = useCallback(
@@ -218,10 +239,11 @@ export function SessionWrapper() {
         withLevel.length > 0
           ? (withLevel[withLevel.length - 1]?.difficultyLevel ?? level)
           : level;
-      const correctCount = values.filter((t) => t.correct).length;
-      const accuracy = values.length > 0 ? (correctCount / values.length) * 100 : 0;
-      const rts = values.map((t) => t.rt).filter((r): r is number => typeof r === 'number');
-      computeRTISV(rts);
+      const correctTrials = values.filter((t) => t.correct);
+      const accuracy = values.length > 0 ? correctTrials.length / values.length : 0;
+      const correctRTs = correctTrials.map((t) => t.rt).filter((r): r is number => typeof r === 'number');
+      const meanRT = computeMeanRT(correctRTs);
+      const rtisv = computeRTISV(correctRTs);
       const thisGameSeconds = useElapsed
         ? elapsedRef.current
         : Math.round(jsPsych.getTotalTime() / 1000);
@@ -235,15 +257,20 @@ export function SessionWrapper() {
           resetSessionUsed();
         }
       } else {
+        const now = new Date();
         const summary = {
-          month: new Date().toISOString().slice(0, 7),
+          date: now.toISOString().slice(0, 10),
+          month: now.toISOString().slice(0, 7),
           moduleId: validId,
           level: finalLevel,
-          accuracy: Math.round(accuracy),
+          accuracy,
           durationSeconds: thisGameSeconds,
+          meanRT,
+          rtisv,
         };
         updateLevel(validId, finalLevel);
         addSession(summary);
+        awardBadges(validId, finalLevel);
       }
       if (options?.skipNavigate) {
         saveAndShowPause(jsPsych, level);
@@ -263,6 +290,7 @@ export function SessionWrapper() {
       resetSessionUsed,
       sessionMaxSeconds,
       isStandard,
+      awardBadges,
     ]
   );
 
@@ -323,19 +351,27 @@ export function SessionWrapper() {
 
           if (abort.signal.aborted) return;
 
-          const correctCount = results.filter((r) => r.correct).length;
-          const accuracyPct = results.length > 0 ? (correctCount / results.length) * 100 : 0;
+          const correctResults = results.filter((r) => r.correct);
+          const accuracy = results.length > 0 ? correctResults.length / results.length : 0;
+          const correctRTs = correctResults.map((r) => r.reactionTimeMs).filter((t): t is number => typeof t === 'number');
+          const meanRT = computeMeanRT(correctRTs);
+          const rtisv = computeRTISV(correctRTs);
           const finalLevel = results.at(-1)?.difficultyLevel ?? level;
           const durationSeconds = Math.max(1, Math.round((Date.now() - startAt) / 1000));
+          const now = new Date();
 
           updateLevel(validId, finalLevel);
           addSession({
-            month: new Date().toISOString().slice(0, 7),
+            date: now.toISOString().slice(0, 10),
+            month: now.toISOString().slice(0, 7),
             moduleId: validId,
             level: finalLevel,
-            accuracy: Math.round(accuracyPct),
+            accuracy,
             durationSeconds,
+            meanRT,
+            rtisv,
           });
+          awardBadges(validId, finalLevel);
 
           if (isTimedVersion) {
             addSessionUsedSeconds(durationSeconds);
