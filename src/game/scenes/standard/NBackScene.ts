@@ -56,7 +56,7 @@ export class NBackScene extends BaseTrialScene<NBackTrialSpec> {
     });
   }
 
-  mapPointerInput(_pointer: Phaser.Input.Pointer) {
+  mapPointerInput(_: Phaser.Input.Pointer) {
     // Any tap counts as "space" for n-back
     return 'space' as const;
   }
@@ -83,7 +83,7 @@ export class NBackScene extends BaseTrialScene<NBackTrialSpec> {
     return true; // responded=true
   }
 
-  getNoResponse(_spec: NBackTrialSpec) {
+  getNoResponse(_: NBackTrialSpec) {
     return false;
   }
 

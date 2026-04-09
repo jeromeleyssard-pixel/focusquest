@@ -131,7 +131,7 @@ export class TaskSwitchScene extends BaseTrialScene<TaskSwitchTrialSpec> {
     return null;
   }
 
-  getNoResponse(_spec: TaskSwitchTrialSpec) {
+  getNoResponse(_: TaskSwitchTrialSpec) {
     return null as TaskSwitchResponse;
   }
 
