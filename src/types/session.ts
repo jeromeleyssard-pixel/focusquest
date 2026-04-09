@@ -22,9 +22,17 @@ export interface SessionData {
 }
 
 export interface SessionSummary {
+  /** ISO date string "YYYY-MM-DD" (ex. "2025-04-10") */
+  date: string;
+  /** Kept for backward compat — "YYYY-MM" */
   month: string;
   moduleId: ModuleId;
   level: number;
+  /** Fraction 0–1 */
   accuracy: number;
   durationSeconds: number;
+  /** Mean reaction time (ms) on correct trials */
+  meanRT: number;
+  /** Reaction-time intra-subject variability (SD of correct RTs) */
+  rtisv: number;
 }

@@ -3,7 +3,7 @@ import { runMigrations } from './dataMigration';
 
 const PROFILES_KEY = 'focusquest_profiles';
 const MIGRATION_VERSION_KEY = 'focusquest_migration_v';
-const CURRENT_MIGRATION_VERSION = 1;
+const CURRENT_MIGRATION_VERSION = 2;
 const MAX_PROFILES = 3;
 
 export function loadProfiles(): PlayerProfile[] {
