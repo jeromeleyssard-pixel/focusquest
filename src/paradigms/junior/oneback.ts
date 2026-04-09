@@ -74,7 +74,7 @@ export function buildOneBackTimeline(
 
     timeline.push({
       type: jsPsychHtmlButtonResponse,
-      stimulus: wrapForet(`<div class="oneback-stim" style="display:flex;align-items:center;justify-content:center;"><img src="${src}" alt="Animal" style="width:min(24vw,110px);height:min(24vw,110px);" /></div>`),
+      stimulus: wrapForet(`<div class="oneback-stim"><img src="${src}" alt="Animal" /></div>`),
       choices: ['Même'],
       stimulus_duration: null,
       trial_duration: responseWindow,

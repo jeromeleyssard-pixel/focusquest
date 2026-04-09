@@ -7,7 +7,7 @@ const NBACK_BG = `${BASE}assets/images/standard/nback-grid-bg.svg`;
 const LETTERS = 'ABCDEFGHJKLMNPQRSTUVWXYZ'.split('');
 
 /** Zone TAP visible : au clic/touch simule la barre d'espace pour mobile. */
-const TAP_ZONE_SPACE = `<div class="fq-tap-zone" style="margin-top:12px;text-align:center;"><button type="button" class="fq-tap-btn" style="padding:14px 32px;font-size:18px;font-weight:bold;background:var(--fq-primary,#2563eb);color:#fff;border:none;border-radius:12px;cursor:pointer;min-height:48px;touch-action:manipulation;" onclick="var e=new KeyboardEvent('keydown',{key:' ',code:'Space',bubbles:true});document.body.dispatchEvent(e);">Appuyer</button></div>`;
+const TAP_ZONE_SPACE = `<div class="fq-tap-zone"><button type="button" class="fq-tap-btn" onclick="var e=new KeyboardEvent('keydown',{key:' ',code:'Space',bubbles:true});document.body.dispatchEvent(e);">Appuyer</button></div>`;
 
 export interface NBackConfig {
   totalTrials?: number;
@@ -33,7 +33,7 @@ export function buildNBackTimeline(
 
     timeline.push({
       type: jsPsychHtmlKeyboardResponse,
-      stimulus: `<div class="fq-stimulus-box" style="background-image:url(${NBACK_BG});background-size:cover;background-position:center;min-height:58vh;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px;box-sizing:border-box;"><div style="font-size:min(20vw,80px);color:#ffffff;font-weight:700;text-shadow:0 2px 10px rgba(0,0,0,0.8);">${current}</div>${TAP_ZONE_SPACE}</div>`,
+      stimulus: `<div class="fq-std-scene" style="background-image:url(${NBACK_BG});"><div class="fq-std-letter">${current}</div>${TAP_ZONE_SPACE}</div>`,
       choices: [' '],
       stimulus_duration: 1200,
       trial_duration: 2200,

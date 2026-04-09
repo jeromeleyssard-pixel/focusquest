@@ -1,14 +1,130 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="400" height="600">
   <defs>
-    <linearGradient id="switchBg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#1e1b4b"/>
-      <stop offset="100%" style="stop-color:#312e81"/>
+    <linearGradient id="ts-bg" x1="0" y1="0" x2="0.5" y2="1">
+      <stop offset="0%"   stop-color="#1e1b4b"/>
+      <stop offset="60%"  stop-color="#2d2770"/>
+      <stop offset="100%" stop-color="#14103a"/>
     </linearGradient>
+    <linearGradient id="ts-panel-left" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#78350f"/>
+      <stop offset="100%" stop-color="#451a03"/>
+    </linearGradient>
+    <linearGradient id="ts-panel-right" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#1e3a8a"/>
+      <stop offset="100%" stop-color="#0c1e5c"/>
+    </linearGradient>
+    <linearGradient id="ts-console" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#0f0e2a"/>
+      <stop offset="100%" stop-color="#07061a"/>
+    </linearGradient>
+    <radialGradient id="ts-orb" cx="40%" cy="35%" r="60%">
+      <stop offset="0%"   stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#b45309"/>
+    </radialGradient>
+    <radialGradient id="ts-orb-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#fbbf24" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#fbbf24" stop-opacity="0"/>
+    </radialGradient>
   </defs>
-  <rect width="400" height="300" fill="url(#switchBg)"/>
-  <rect x="20" y="50" width="150" height="200" rx="14" fill="#0f172a" opacity="0.6"/>
-  <rect x="230" y="50" width="150" height="200" rx="14" fill="#0f172a" opacity="0.6"/>
-  <circle cx="200" cy="150" r="36" fill="#f59e0b" opacity="0.9"/>
-  <path d="M186 136 L214 150 L186 164 Z" fill="#1f2937"/>
-  <path d="M214 136 L186 150 L214 164 Z" fill="#111827"/>
+
+  <!-- Background -->
+  <rect width="400" height="600" fill="url(#ts-bg)"/>
+
+  <!-- Subtle hex grid overlay -->
+  <g stroke="#4338ca" stroke-width="0.6" opacity="0.14">
+    <line x1="0"   y1="60"  x2="400" y2="60"/>
+    <line x1="0"   y1="120" x2="400" y2="120"/>
+    <line x1="0"   y1="180" x2="400" y2="180"/>
+    <line x1="0"   y1="240" x2="400" y2="240"/>
+    <line x1="0"   y1="300" x2="400" y2="300"/>
+    <line x1="0"   y1="360" x2="400" y2="360"/>
+    <line x1="0"   y1="420" x2="400" y2="420"/>
+    <line x1="0"   y1="480" x2="400" y2="480"/>
+    <line x1="0"   y1="540" x2="400" y2="540"/>
+    <line x1="60"  y1="0"   x2="60"  y2="600"/>
+    <line x1="120" y1="0"   x2="120" y2="600"/>
+    <line x1="180" y1="0"   x2="180" y2="600"/>
+    <line x1="240" y1="0"   x2="240" y2="600"/>
+    <line x1="300" y1="0"   x2="300" y2="600"/>
+    <line x1="360" y1="0"   x2="360" y2="600"/>
+  </g>
+
+  <!-- LEFT panel (warm — parity rule) -->
+  <rect x="10"  y="80"  width="170" height="360" rx="16" fill="url(#ts-panel-left)"/>
+  <rect x="10"  y="80"  width="170" height="360" rx="16" fill="none" stroke="#f59e0b" stroke-width="1.5" opacity="0.60"/>
+  <!-- Left panel inner surface -->
+  <rect x="18"  y="88"  width="154" height="344" rx="12" fill="#1c0e04" opacity="0.50"/>
+  <!-- Left panel label -->
+  <text x="95" y="120" font-family="Arial" font-weight="900" font-size="15" fill="#fde68a" text-anchor="middle" opacity="0.90">PAIR / IMPAIR</text>
+  <!-- Left panel icons -->
+  <text x="95" y="200" font-family="Arial" font-size="60" fill="#fbbf24" text-anchor="middle" opacity="0.80">2</text>
+  <text x="66" y="260" font-family="Arial" font-size="30" fill="#fde68a" text-anchor="middle" opacity="0.55">4</text>
+  <text x="124" y="260" font-family="Arial" font-size="30" fill="#fde68a" text-anchor="middle" opacity="0.55">6</text>
+  <!-- Left arrow indicator -->
+  <path d="M60,320 L40,340 L60,360 M40,340 L130,340" stroke="#f59e0b" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>
+  <text x="95" y="400" font-family="Arial" font-size="13" fill="#fde68a" text-anchor="middle" opacity="0.70">← Gauche</text>
+
+  <!-- RIGHT panel (cool — magnitude rule) -->
+  <rect x="220" y="80"  width="170" height="360" rx="16" fill="url(#ts-panel-right)"/>
+  <rect x="220" y="80"  width="170" height="360" rx="16" fill="none" stroke="#60a5fa" stroke-width="1.5" opacity="0.60"/>
+  <rect x="228" y="88"  width="154" height="344" rx="12" fill="#020b24" opacity="0.50"/>
+  <!-- Right panel label -->
+  <text x="305" y="120" font-family="Arial" font-weight="900" font-size="15" fill="#bfdbfe" text-anchor="middle" opacity="0.90">&gt; 5 / ≤ 5</text>
+  <!-- Right panel icons -->
+  <text x="305" y="200" font-family="Arial" font-size="60" fill="#60a5fa" text-anchor="middle" opacity="0.80">7</text>
+  <text x="276" y="260" font-family="Arial" font-size="30" fill="#bfdbfe" text-anchor="middle" opacity="0.55">9</text>
+  <text x="334" y="260" font-family="Arial" font-size="30" fill="#bfdbfe" text-anchor="middle" opacity="0.55">3</text>
+  <!-- Right arrow indicator -->
+  <path d="M340,320 L360,340 L340,360 M360,340 L270,340" stroke="#3b82f6" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>
+  <text x="305" y="400" font-family="Arial" font-size="13" fill="#bfdbfe" text-anchor="middle" opacity="0.70">Droite →</text>
+
+  <!-- Central switch orb -->
+  <circle cx="200" cy="262" r="44" fill="url(#ts-orb-glow)"/>
+  <circle cx="200" cy="262" r="30" fill="url(#ts-orb)"/>
+  <circle cx="200" cy="262" r="30" fill="none" stroke="#fde68a" stroke-width="2" opacity="0.80"/>
+  <!-- Orb inner arrows (switch symbol) -->
+  <path d="M188,252 L196,244 L204,252" fill="none" stroke="#1c0e04" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M212,272 L204,280 L196,272" fill="none" stroke="#1c0e04" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="196" y1="244" x2="196" y2="280" stroke="#1c0e04" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="204" y1="244" x2="204" y2="280" stroke="#1c0e04" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Connection lines from panels to orb -->
+  <line x1="184" y1="262" x2="156" y2="262" stroke="#f59e0b" stroke-width="2" opacity="0.55" stroke-dasharray="6,4"/>
+  <line x1="216" y1="262" x2="244" y2="262" stroke="#3b82f6" stroke-width="2" opacity="0.55" stroke-dasharray="6,4"/>
+
+  <!-- Bottom console -->
+  <rect x="0"   y="480" width="400" height="120" rx="0" fill="url(#ts-console)"/>
+  <rect x="0"   y="480" width="400" height="3"   fill="#6366f1" opacity="0.70"/>
+
+  <!-- Console LED strips -->
+  <rect x="20"  y="490" width="160" height="6" rx="3" fill="#f59e0b" opacity="0.55"/>
+  <rect x="220" y="490" width="160" height="6" rx="3" fill="#3b82f6" opacity="0.55"/>
+
+  <!-- Console dials & indicators -->
+  <circle cx="50"  cy="530" r="18" fill="#0f0e2a" stroke="#6366f1" stroke-width="1.5" opacity="0.90"/>
+  <line x1="50"  y1="530" x2="62" y2="520" stroke="#a5b4fc" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
+  <circle cx="50" cy="530" r="3"  fill="#6366f1" opacity="0.90"/>
+
+  <circle cx="100" cy="530" r="18" fill="#0f0e2a" stroke="#6366f1" stroke-width="1.5" opacity="0.90"/>
+  <line x1="100" y1="530" x2="100" y2="514" stroke="#a5b4fc" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
+  <circle cx="100" cy="530" r="3"  fill="#6366f1" opacity="0.90"/>
+
+  <!-- Status display centre -->
+  <rect x="148" y="508" width="104" height="44" rx="8" fill="#07061a" opacity="0.95"/>
+  <text x="200" y="527" font-family="monospace" font-size="10" fill="#a5b4fc" text-anchor="middle" opacity="0.80">RÈGLE ACTIVE</text>
+  <text x="200" y="542" font-family="monospace" font-size="12" fill="#fde68a" text-anchor="middle" opacity="0.95">PAIR / IMPAIR</text>
+
+  <circle cx="300" cy="530" r="18" fill="#0f0e2a" stroke="#6366f1" stroke-width="1.5" opacity="0.90"/>
+  <line x1="300" y1="530" x2="312" y2="540" stroke="#a5b4fc" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
+  <circle cx="300" cy="530" r="3"  fill="#6366f1" opacity="0.90"/>
+
+  <circle cx="350" cy="530" r="18" fill="#0f0e2a" stroke="#6366f1" stroke-width="1.5" opacity="0.90"/>
+  <line x1="350" y1="530" x2="338" y2="520" stroke="#a5b4fc" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
+  <circle cx="350" cy="530" r="3"  fill="#6366f1" opacity="0.90"/>
+
+  <!-- Floating particles / sparks -->
+  <circle cx="192" cy="55"  r="2.5" fill="#fbbf24" opacity="0.70"/>
+  <circle cx="210" cy="42"  r="1.8" fill="#a78bfa" opacity="0.60"/>
+  <circle cx="178" cy="48"  r="1.5" fill="#60a5fa" opacity="0.55"/>
+  <circle cx="200" cy="35"  r="3.0" fill="#fde68a" opacity="0.65"/>
 </svg>

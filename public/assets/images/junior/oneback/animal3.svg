@@ -1,1 +1,32 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80"><ellipse cx="40" cy="48" rx="30" ry="24" fill="#64B5F6"/><circle cx="32" cy="42" r="5" fill="#333"/><circle cx="48" cy="42" r="5" fill="#333"/><path d="M18 35 Q40 20 62 35" fill="none" stroke="#1976D2" stroke-width="2"/><path d="M40 24 L40 8" stroke="#1976D6" stroke-width="3" fill="none"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <!-- Shadow -->
+  <ellipse cx="60" cy="116" rx="32" ry="5" fill="rgba(0,0,0,0.15)"/>
+  <!-- Body -->
+  <ellipse cx="60" cy="88" rx="30" ry="30" fill="#5C6BC0"/>
+  <!-- Wings -->
+  <ellipse cx="26" cy="88" rx="16" ry="24" fill="#3F51B5" transform="rotate(14 26 88)"/>
+  <ellipse cx="94" cy="88" rx="16" ry="24" fill="#3F51B5" transform="rotate(-14 94 88)"/>
+  <!-- Belly feathers -->
+  <ellipse cx="60" cy="94" rx="18" ry="22" fill="#9FA8DA"/>
+  <!-- Head -->
+  <circle cx="60" cy="52" r="34" fill="#5C6BC0"/>
+  <!-- Ear tufts -->
+  <polygon points="38,28 32,10 46,26" fill="#3F51B5"/>
+  <polygon points="82,28 88,10 74,26" fill="#3F51B5"/>
+  <!-- LARGE owl eyes (characteristic) -->
+  <circle cx="45" cy="50" r="15" fill="#FFF9C4"/>
+  <circle cx="75" cy="50" r="15" fill="#FFF9C4"/>
+  <circle cx="45" cy="50" r="11" fill="#FFA000"/>
+  <circle cx="75" cy="50" r="11" fill="#FFA000"/>
+  <circle cx="45" cy="51" r="7"  fill="#111"/>
+  <circle cx="75" cy="51" r="7"  fill="#111"/>
+  <circle cx="48" cy="47" r="3"  fill="#fff" opacity="0.95"/>
+  <circle cx="78" cy="47" r="3"  fill="#fff" opacity="0.95"/>
+  <!-- Beak -->
+  <path d="M54 64 L60 72 L66 64 Z" fill="#FFB300"/>
+  <!-- Feet / perch claws -->
+  <line x1="46" y1="112" x2="46" y2="118" stroke="#9E9E9E" stroke-width="4" stroke-linecap="round"/>
+  <line x1="56" y1="112" x2="56" y2="118" stroke="#9E9E9E" stroke-width="4" stroke-linecap="round"/>
+  <line x1="64" y1="112" x2="64" y2="118" stroke="#9E9E9E" stroke-width="4" stroke-linecap="round"/>
+  <line x1="74" y1="112" x2="74" y2="118" stroke="#9E9E9E" stroke-width="4" stroke-linecap="round"/>
+</svg>

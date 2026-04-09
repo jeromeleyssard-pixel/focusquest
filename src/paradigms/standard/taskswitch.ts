@@ -7,8 +7,8 @@ const BASE = typeof import.meta !== 'undefined' && import.meta.env?.BASE_URL != 
 const TASKSWITCH_BG = `${BASE}assets/images/standard/taskswitch-lab-bg.svg`;
 
 const TAP_BTN = (key: 'ArrowLeft' | 'ArrowRight', label: string) =>
-  `<button type="button" class="fq-tap-btn" style="padding:14px 24px;font-size:20px;font-weight:bold;background:var(--fq-primary,#2563eb);color:#fff;border:none;border-radius:12px;cursor:pointer;min-height:48px;touch-action:manipulation;" onclick="var e=new KeyboardEvent('keydown',{key:'${key}',code:'${key}',bubbles:true});document.body.dispatchEvent(e);">${label}</button>`;
-const TAP_ZONE_ARROWS = `<div class="fq-tap-zone" style="margin-top:12px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">${TAP_BTN('ArrowLeft', '← Gauche')}${TAP_BTN('ArrowRight', '→ Droite')}</div>`;
+  `<button type="button" class="fq-tap-btn" onclick="var e=new KeyboardEvent('keydown',{key:'${key}',code:'${key}',bubbles:true});document.body.dispatchEvent(e);">${label}</button>`;
+const TAP_ZONE_ARROWS = `<div class="fq-tap-zone">${TAP_BTN('ArrowLeft', '← Gauche')}${TAP_BTN('ArrowRight', '→ Droite')}</div>`;
 
 const TS_STAIRCASE: StaircaseConfig = {
   mode: '2-down-1-up',
@@ -55,7 +55,7 @@ export function buildTaskSwitchTimeline(
 
     timeline.push({
       type: jsPsychHtmlKeyboardResponse,
-      stimulus: `<div class="fq-stimulus-box" style="background-image:url(${TASKSWITCH_BG});background-size:cover;background-position:center;min-height:58vh;border-radius:12px;padding:14px;display:flex;flex-direction:column;justify-content:space-between;"><div style="align-self:center;background:rgba(17,24,39,0.75);color:#fff;padding:8px 14px;border-radius:8px;font-weight:700;font-size:min(4vw,18px);">${panel}</div><div style="display:flex;justify-content:space-between;align-items:center;"><div style="color:#fde68a;font-weight:600;font-size:min(4.5vw,18px);">${leftLabel}</div><div style="font-size:min(18vw,72px);color:#fff;font-weight:700;text-shadow:0 2px 8px rgba(0,0,0,0.8);">${value}</div><div style="color:#bfdbfe;font-weight:600;font-size:min(4.5vw,18px);">${rightLabel}</div></div>${TAP_ZONE_ARROWS}</div>`,
+      stimulus: `<div class="fq-std-scene" style="background-image:url(${TASKSWITCH_BG});justify-content:space-between;"><div class="fq-ts-rule-pill">${panel}</div><div class="fq-ts-side"><span class="fq-ts-left-label">${leftLabel}</span><span class="fq-ts-number">${value}</span><span class="fq-ts-right-label">${rightLabel}</span></div>${TAP_ZONE_ARROWS}</div>`,
       choices: ['arrowleft', 'arrowright'],
       stimulus_duration: null,
       trial_duration: Math.max(1200, 2600 - (level - 1) * 130),
