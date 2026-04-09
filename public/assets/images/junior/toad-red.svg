@@ -1,9 +1,76 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
-  <ellipse cx="40" cy="50" rx="32" ry="22" fill="#c62828"/>
-  <circle cx="40" cy="28" r="22" fill="#c62828"/>
-  <circle cx="32" cy="24" r="5" fill="#fff"/>
-  <circle cx="48" cy="24" r="5" fill="#fff"/>
-  <circle cx="33" cy="24" r="2" fill="#000"/>
-  <circle cx="49" cy="24" r="2" fill="#000"/>
-  <ellipse cx="40" cy="58" rx="12" ry="6" fill="#b71c1c"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160">
+  <!-- Drop shadow (wider/flatter than frog) -->
+  <ellipse cx="80" cy="154" rx="56" ry="6" fill="rgba(0,0,0,0.22)"/>
+
+  <!-- Wide squatty body -->
+  <ellipse cx="80" cy="114" rx="58" ry="34" fill="#8b1a1a"/>
+  <!-- Belly — pale pinkish -->
+  <ellipse cx="80" cy="119" rx="38" ry="22" fill="#e8b4b8"/>
+
+  <!-- Body warts -->
+  <circle cx="40" cy="110" r="6" fill="#6d1414"/>
+  <circle cx="56" cy="100" r="5" fill="#6d1414"/>
+  <circle cx="78" cy="132" r="4" fill="#6d1414"/>
+  <circle cx="100" cy="100" r="5" fill="#6d1414"/>
+  <circle cx="118" cy="110" r="6" fill="#6d1414"/>
+  <circle cx="44" cy="124" r="3.5" fill="#6d1414"/>
+  <circle cx="114" cy="122" r="3.5" fill="#6d1414"/>
+
+  <!-- Head — FLAT and WIDE, not round like frog -->
+  <ellipse cx="80" cy="76" rx="46" ry="30" fill="#8b1a1a"/>
+
+  <!-- Head warts -->
+  <circle cx="54" cy="68" r="4.5" fill="#6d1414"/>
+  <circle cx="106" cy="66" r="4.5" fill="#6d1414"/>
+  <circle cx="80" cy="60" r="3.5" fill="#6d1414"/>
+
+  <!-- HEAVY BROW RIDGE — the #1 distinguishing grumpy feature -->
+  <path d="M28 62 Q57 50 78 58" fill="#4a0000" stroke="#4a0000" stroke-width="4" stroke-linecap="round"/>
+  <path d="M132 62 Q103 50 82 58" fill="#4a0000" stroke="#4a0000" stroke-width="4" stroke-linecap="round"/>
+  <!-- Brow fill -->
+  <path d="M28 62 Q57 50 78 58 L78 64 Q57 58 32 68 Z" fill="#4a0000"/>
+  <path d="M132 62 Q103 50 82 58 L82 64 Q103 58 128 68 Z" fill="#4a0000"/>
+
+  <!-- Eye sockets — NOT protruding, set flat under brows -->
+  <ellipse cx="56" cy="70" rx="14" ry="10" fill="#6d1414"/>
+  <ellipse cx="104" cy="70" rx="14" ry="10" fill="#6d1414"/>
+
+  <!-- Eyes — NARROWED, half-closed look -->
+  <ellipse cx="56" cy="69" rx="11" ry="7" fill="#fff8e1"/>
+  <ellipse cx="104" cy="69" rx="11" ry="7" fill="#fff8e1"/>
+
+  <!-- Iris — orange, beady, not golden like frog -->
+  <ellipse cx="56" cy="69" rx="7" ry="5" fill="#bf6000"/>
+  <ellipse cx="104" cy="69" rx="7" ry="5" fill="#bf6000"/>
+
+  <!-- Pupils — HORIZONTAL slit (toad-like), not vertical like frog -->
+  <ellipse cx="56" cy="69" rx="5" ry="2.5" fill="#111"/>
+  <ellipse cx="104" cy="69" rx="5" ry="2.5" fill="#111"/>
+
+  <!-- Eye catchlight (small, not bright like frog) -->
+  <circle cx="60" cy="66" r="2" fill="#fff" opacity="0.7"/>
+  <circle cx="108" cy="66" r="2" fill="#fff" opacity="0.7"/>
+
+  <!-- Nostrils — wide and flat -->
+  <ellipse cx="72" cy="83" rx="4.5" ry="2.5" fill="#5a0f0f"/>
+  <ellipse cx="88" cy="83" rx="4.5" ry="2.5" fill="#5a0f0f"/>
+
+  <!-- FROWN — upward arc = downward mouth corners -->
+  <path d="M50 93 Q80 82 110 93" fill="none" stroke="#4a0000" stroke-width="4" stroke-linecap="round"/>
+  <!-- Lower lip bulge -->
+  <path d="M58 94 Q80 88 102 94" fill="#a04040" stroke="none"/>
+
+  <!-- Short stubby front legs (no long arcs like frog) -->
+  <ellipse cx="34" cy="126" rx="16" ry="10" fill="#8b1a1a" transform="rotate(-15 34 126)"/>
+  <ellipse cx="126" cy="126" rx="16" ry="10" fill="#8b1a1a" transform="rotate(15 126 126)"/>
+
+  <!-- Stubby toes — only 2 visible each side, round and thick -->
+  <circle cx="19" cy="132" r="6.5" fill="#6d1414"/>
+  <circle cx="29" cy="138" r="6.5" fill="#6d1414"/>
+  <circle cx="141" cy="132" r="6.5" fill="#6d1414"/>
+  <circle cx="131" cy="138" r="6.5" fill="#6d1414"/>
+
+  <!-- Back feet — short, very wide -->
+  <ellipse cx="54" cy="146" rx="22" ry="10" fill="#6d1414" transform="rotate(-5 54 146)"/>
+  <ellipse cx="106" cy="146" rx="22" ry="10" fill="#6d1414" transform="rotate(5 106 146)"/>
 </svg>
